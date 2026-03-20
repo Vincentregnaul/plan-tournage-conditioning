@@ -4,6 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Plan de Tournage — Programmes Conditioning | Vincent Regnault</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#3498db">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Tournage VR">
+  <link rel="apple-touch-icon" href="icon-192.svg">
   <style>
     :root {
       --bg: #0a0a0f;
@@ -399,6 +405,154 @@
       .video-tag { display: none; }
     }
 
+    /* Tutos Ideas */
+    .tuto-add {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .tuto-add input {
+      flex: 1;
+      padding: 0.6rem 1rem;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      font-size: 0.85rem;
+      outline: none;
+    }
+    .tuto-add input:focus { border-color: var(--primary); }
+    .tuto-add button {
+      padding: 0.6rem 1.2rem;
+      border-radius: 6px;
+      border: none;
+      background: var(--primary);
+      color: #fff;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .tuto-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 0.75rem;
+      overflow: hidden;
+    }
+    .tuto-card.status-idea { border-left: 3px solid var(--warning); }
+    .tuto-card.status-tofilm { border-left: 3px solid var(--primary); }
+    .tuto-card.status-filmed { border-left: 3px solid var(--accent); }
+    .tuto-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      cursor: pointer;
+    }
+    .tuto-title { font-weight: 600; font-size: 0.9rem; flex: 1; }
+    .tuto-status-badge {
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+    .badge-idea { background: var(--warning); color: #000; }
+    .badge-tofilm { background: var(--primary); color: #fff; }
+    .badge-filmed { background: var(--accent); color: #000; }
+    .tuto-details {
+      display: none;
+      padding: 0 1rem 1rem;
+      border-top: 1px solid var(--border);
+    }
+    .tuto-card.open .tuto-details { display: block; }
+    .tuto-desc-area {
+      width: 100%;
+      min-height: 120px;
+      padding: 0.75rem;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text);
+      font-size: 0.8rem;
+      font-family: inherit;
+      line-height: 1.6;
+      resize: vertical;
+      outline: none;
+      margin-top: 0.75rem;
+    }
+    .tuto-desc-area:focus { border-color: var(--primary); }
+    .tuto-actions {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.75rem;
+      flex-wrap: wrap;
+    }
+    .tuto-actions button {
+      padding: 0.35rem 0.75rem;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 0.75rem;
+    }
+    .tuto-actions button:hover { border-color: var(--primary); color: var(--text); }
+    .tuto-actions button.btn-search { border-color: var(--primary); color: var(--primary); }
+    .tuto-actions button.btn-delete { border-color: var(--danger); color: var(--danger); }
+    .tuto-actions button.btn-status { border-color: var(--accent); color: var(--accent); }
+    .tuto-search-results {
+      margin-top: 0.75rem;
+      padding: 0.75rem;
+      background: var(--surface2);
+      border-radius: 6px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      display: none;
+    }
+    .tuto-search-results.visible { display: block; }
+    .tuto-search-results .loading {
+      color: var(--primary);
+      font-style: italic;
+    }
+    .tuto-filters {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+    .tuto-filters button {
+      padding: 0.4rem 0.8rem;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 0.75rem;
+    }
+    .tuto-filters button.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .tuto-counter {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+    }
+    .tuto-counter strong { color: var(--text); }
+
+    /* Install prompt */
+    .install-banner {
+      display: none;
+      padding: 0.75rem 2rem;
+      background: linear-gradient(90deg, var(--primary-dim), var(--accent-dim));
+      text-align: center;
+      cursor: pointer;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+    .install-banner:hover { opacity: 0.9; }
+
     /* Print */
     @media print {
       .header, .tabs, .stats-bar, .search-bar { display: none; }
@@ -458,6 +612,11 @@
   <div class="tab" data-tab="sm" style="border-color: var(--sm-color)">SM Sol <span class="badge">16</span></div>
   <div class="tab" data-tab="sma" style="border-color: var(--sma-color)">SM Aerien <span class="badge">17</span></div>
   <div class="tab" data-tab="intros" style="border-color: var(--warning)">Intros <span class="badge">8</span></div>
+  <div class="tab" data-tab="tutos" style="border-color: #e056c1">Idees Tutos <span class="badge" id="tuto-tab-count">0</span></div>
+</div>
+
+<div class="install-banner" id="install-banner" onclick="installPWA()">
+  Installer l'app sur votre telephone
 </div>
 
 <div class="content">
@@ -1640,6 +1799,32 @@
     <div class="video-card" data-id="105"><div class="video-header" onclick="toggleCard(this)"><input type="checkbox" onclick="event.stopPropagation(); updateProgress()"><span class="video-num">105</span><span class="video-tag tag-intro">Intro</span><span class="video-title">Securite + outro (commun)</span><span class="video-duration">1 min</span><span class="video-expand">&#9660;</span></div><div class="video-details"><div class="video-desc">Signaux d'alerte (douleur epaule, engourdissement, claquement). Regles : crash mat toujours, echauffement obligatoire, max 2 sessions on-pole/semaine, rotation externe a chaque seance, pole statique pour apprendre. "La regularite bat l'intensite."</div></div></div>
   </section>
 
+  <!-- ==================== IDEES TUTOS ==================== -->
+  <section class="section" id="section-tutos">
+
+    <div class="session-header" style="border-left-color: #e056c1;">
+      <h2>Idees de Tutos Pole Dance</h2>
+      <span class="count" id="tuto-total-count">0 idees</span>
+    </div>
+
+    <div class="tuto-add">
+      <input type="text" id="tuto-input" placeholder="Nom de la figure (ex: Jade Split, Ayesha, Deadlift...)" onkeydown="if(event.key==='Enter') addTuto()">
+      <button onclick="addTuto()">+ Ajouter</button>
+    </div>
+
+    <div class="tuto-filters">
+      <button class="active" onclick="filterTutos('all', this)">Toutes</button>
+      <button onclick="filterTutos('idea', this)">Idees</button>
+      <button onclick="filterTutos('tofilm', this)">A filmer</button>
+      <button onclick="filterTutos('filmed', this)">Filmees</button>
+    </div>
+
+    <div class="tuto-counter" id="tuto-counter"></div>
+
+    <div id="tuto-list"></div>
+
+  </section>
+
 </div>
 
 <script>
@@ -1880,6 +2065,238 @@
     });
     document.querySelector('.tab.active')?.click();
   }
+
+  // ==================== IDEES TUTOS ====================
+
+  const STATUSES = { idea: 'Idee', tofilm: 'A filmer', filmed: 'Filmee' };
+  const STATUS_ORDER = ['idea', 'tofilm', 'filmed'];
+  let currentFilter = 'all';
+
+  function getTutos() {
+    return JSON.parse(localStorage.getItem('tutos') || '[]');
+  }
+
+  function saveTutos(tutos) {
+    localStorage.setItem('tutos', JSON.stringify(tutos));
+    renderTutos();
+    updateTutoCounts();
+  }
+
+  function addTuto() {
+    const input = document.getElementById('tuto-input');
+    const name = input.value.trim();
+    if (!name) return;
+
+    const tutos = getTutos();
+    tutos.push({
+      id: Date.now().toString(),
+      name: name,
+      status: 'idea',
+      description: '',
+      vimeoId: '',
+      createdAt: new Date().toISOString()
+    });
+    saveTutos(tutos);
+    input.value = '';
+  }
+
+  function renderTutos() {
+    const tutos = getTutos();
+    const list = document.getElementById('tuto-list');
+    const filtered = currentFilter === 'all' ? tutos : tutos.filter(t => t.status === currentFilter);
+
+    list.innerHTML = filtered.map(t => `
+      <div class="tuto-card status-${t.status}" data-tuto-id="${t.id}">
+        <div class="tuto-header" onclick="toggleTuto('${t.id}')">
+          <span class="tuto-status-badge badge-${t.status}">${STATUSES[t.status]}</span>
+          <span class="tuto-title">${escapeHtml(t.name)}</span>
+          ${t.vimeoId ? '<span style="font-size:0.7rem;color:var(--accent);">Vimeo OK</span>' : ''}
+          <span class="video-expand">&#9660;</span>
+        </div>
+        <div class="tuto-details">
+          <div class="tuto-actions">
+            <button class="btn-search" onclick="searchFigure('${t.id}')">Rechercher description</button>
+            <button class="btn-status" onclick="cycleTutoStatus('${t.id}')">${getNextStatusLabel(t.status)}</button>
+            <button class="btn-delete" onclick="deleteTuto('${t.id}')">Supprimer</button>
+          </div>
+
+          <div class="tuto-search-results" id="search-results-${t.id}"></div>
+
+          <textarea class="tuto-desc-area" placeholder="Description / notes pour le tournage..."
+            oninput="saveTutoField('${t.id}', 'description', this.value)">${escapeHtml(t.description || '')}</textarea>
+
+          <div class="vimeo-field" style="margin-top:0.5rem;">
+            <label><span class="vimeo-status ${t.vimeoId ? 'filled' : ''}" id="tvs-${t.id}"></span> Vimeo ID</label>
+            <input type="text" value="${t.vimeoId || ''}" placeholder="ex: 987654321"
+              oninput="saveTutoField('${t.id}', 'vimeoId', this.value); document.getElementById('tvs-${t.id}').classList.toggle('filled', !!this.value)">
+            ${t.vimeoId ? `<a href="https://vimeo.com/${t.vimeoId}" target="_blank" style="font-size:0.7rem;color:var(--primary);">Voir</a>` : ''}
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  function toggleTuto(id) {
+    const card = document.querySelector(`.tuto-card[data-tuto-id="${id}"]`);
+    if (card) card.classList.toggle('open');
+  }
+
+  function getNextStatusLabel(status) {
+    const next = STATUS_ORDER[(STATUS_ORDER.indexOf(status) + 1) % STATUS_ORDER.length];
+    return 'Passer en : ' + STATUSES[next];
+  }
+
+  function cycleTutoStatus(id) {
+    const tutos = getTutos();
+    const t = tutos.find(x => x.id === id);
+    if (!t) return;
+    const idx = STATUS_ORDER.indexOf(t.status);
+    t.status = STATUS_ORDER[(idx + 1) % STATUS_ORDER.length];
+    saveTutos(tutos);
+  }
+
+  function deleteTuto(id) {
+    if (!confirm('Supprimer cette idee ?')) return;
+    const tutos = getTutos().filter(t => t.id !== id);
+    saveTutos(tutos);
+  }
+
+  function saveTutoField(id, field, value) {
+    const tutos = getTutos();
+    const t = tutos.find(x => x.id === id);
+    if (!t) return;
+    t[field] = value;
+    localStorage.setItem('tutos', JSON.stringify(tutos));
+    updateTutoCounts();
+  }
+
+  function filterTutos(status, btn) {
+    currentFilter = status;
+    document.querySelectorAll('.tuto-filters button').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    renderTutos();
+  }
+
+  function updateTutoCounts() {
+    const tutos = getTutos();
+    const ideas = tutos.filter(t => t.status === 'idea').length;
+    const tofilm = tutos.filter(t => t.status === 'tofilm').length;
+    const filmed = tutos.filter(t => t.status === 'filmed').length;
+
+    document.getElementById('tuto-tab-count').textContent = tutos.length;
+    document.getElementById('tuto-total-count').textContent = tutos.length + ' idees';
+    document.getElementById('tuto-counter').innerHTML =
+      `<strong>${ideas}</strong> idees | <strong>${tofilm}</strong> a filmer | <strong>${filmed}</strong> filmees`;
+  }
+
+  // Web search for figure description
+  async function searchFigure(id) {
+    const tutos = getTutos();
+    const t = tutos.find(x => x.id === id);
+    if (!t) return;
+
+    const resultsDiv = document.getElementById('search-results-' + id);
+    resultsDiv.classList.add('visible');
+    resultsDiv.innerHTML = '<div class="loading">Recherche en cours pour "' + escapeHtml(t.name) + '"...</div>';
+
+    try {
+      const query = encodeURIComponent(t.name + ' pole dance tutorial how to');
+      // Use Wikipedia API for description (no key needed, CORS ok)
+      const wikiQuery = encodeURIComponent(t.name + ' pole dance');
+      const wikiResp = await fetch('https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=' + wikiQuery + '&format=json&origin=*&srlimit=3');
+      const wikiData = await wikiResp.json();
+
+      let html = '<strong style="color:var(--text);">Resultats pour "' + escapeHtml(t.name) + '" :</strong><br><br>';
+
+      // Wiki results
+      if (wikiData.query?.search?.length > 0) {
+        wikiData.query.search.forEach((item, i) => {
+          const snippet = item.snippet.replace(/<\/?span[^>]*>/g, '');
+          html += `<div style="margin-bottom:0.75rem;">
+            <a href="https://en.wikipedia.org/wiki/${encodeURIComponent(item.title)}" target="_blank" style="color:var(--primary);font-size:0.8rem;text-decoration:none;">${i+1}. ${escapeHtml(item.title)}</a>
+            <div style="font-size:0.75rem;color:var(--text-muted);margin-top:0.2rem;">${snippet}</div>
+          </div>`;
+        });
+      }
+
+      // Direct search links
+      const searchName = encodeURIComponent(t.name + ' pole dance');
+      html += `<div style="margin-top:1rem; padding-top:0.75rem; border-top:1px solid var(--border);">
+        <strong style="color:var(--text);font-size:0.8rem;">Recherches directes :</strong><br>
+        <div style="display:flex;gap:0.5rem;margin-top:0.5rem;flex-wrap:wrap;">
+          <a href="https://www.google.com/search?q=${searchName}+tutorial" target="_blank" style="color:var(--primary);font-size:0.75rem;padding:0.25rem 0.5rem;border:1px solid var(--primary);border-radius:4px;text-decoration:none;">Google</a>
+          <a href="https://www.youtube.com/results?search_query=${searchName}+tutorial" target="_blank" style="color:#ff0000;font-size:0.75rem;padding:0.25rem 0.5rem;border:1px solid #ff0000;border-radius:4px;text-decoration:none;">YouTube</a>
+          <a href="https://www.instagram.com/explore/tags/${encodeURIComponent(t.name.replace(/\s+/g, '').toLowerCase())}poledance/" target="_blank" style="color:#e056c1;font-size:0.75rem;padding:0.25rem 0.5rem;border:1px solid #e056c1;border-radius:4px;text-decoration:none;">Instagram</a>
+        </div>
+      </div>`;
+
+      html += '<br><button onclick="applySearchToDesc(\'' + id + '\')" style="padding:0.3rem 0.75rem;border-radius:4px;border:1px solid var(--accent);background:transparent;color:var(--accent);cursor:pointer;font-size:0.75rem;">Copier les infos dans la description</button>';
+
+      resultsDiv.innerHTML = html;
+      resultsDiv.dataset.results = JSON.stringify(
+        (wikiData.query?.search || []).map(i => i.title + ': ' + i.snippet.replace(/<\/?span[^>]*>/g, ''))
+      );
+
+    } catch (err) {
+      const searchName = encodeURIComponent(t.name + ' pole dance');
+      resultsDiv.innerHTML = `
+        <div style="color:var(--warning);">Recherche offline. Liens directs :</div>
+        <div style="display:flex;gap:0.5rem;margin-top:0.5rem;flex-wrap:wrap;">
+          <a href="https://www.google.com/search?q=${searchName}+tutorial" target="_blank" style="color:var(--primary);font-size:0.8rem;padding:0.25rem 0.5rem;border:1px solid var(--primary);border-radius:4px;text-decoration:none;">Google</a>
+          <a href="https://www.youtube.com/results?search_query=${searchName}+tutorial" target="_blank" style="color:#ff0000;font-size:0.8rem;padding:0.25rem 0.5rem;border:1px solid #ff0000;border-radius:4px;text-decoration:none;">YouTube</a>
+        </div>`;
+    }
+  }
+
+  function applySearchToDesc(id) {
+    const resultsDiv = document.getElementById('search-results-' + id);
+    const results = JSON.parse(resultsDiv.dataset.results || '[]');
+    if (!results.length) return;
+
+    const tutos = getTutos();
+    const t = tutos.find(x => x.id === id);
+    if (!t) return;
+
+    const info = results.join('\n\n');
+    t.description = (t.description ? t.description + '\n\n---\nRecherche:\n' : '') + info;
+    saveTutos(tutos);
+  }
+
+  // ==================== PWA ====================
+
+  // Register service worker
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  }
+
+  // Install prompt
+  let deferredPrompt;
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    document.getElementById('install-banner').style.display = 'block';
+  });
+
+  function installPWA() {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then((result) => {
+      document.getElementById('install-banner').style.display = 'none';
+      deferredPrompt = null;
+    });
+  }
+
+  // Init tutos on load
+  window.addEventListener('DOMContentLoaded', () => {
+    renderTutos();
+    updateTutoCounts();
+  });
 </script>
 
 </body>
