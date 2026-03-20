@@ -1,0 +1,1886 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Plan de Tournage — Programmes Conditioning | Vincent Regnault</title>
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --surface: #13131a;
+      --surface2: #1a1a24;
+      --border: #2a2a3a;
+      --text: #e8e8f0;
+      --text-muted: #8888a0;
+      --primary: #3498db;
+      --primary-dim: #2a7ab8;
+      --accent: #2ecc71;
+      --accent-dim: #27ae60;
+      --warning: #f39c12;
+      --danger: #e74c3c;
+      --v-color: #9b59b6;
+      --va-color: #e74c3c;
+      --sm-color: #3498db;
+      --sma-color: #f39c12;
+      --common-color: #2ecc71;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    /* Header */
+    .header {
+      background: linear-gradient(135deg, #0d0d15 0%, #1a1a2e 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 2rem;
+      text-align: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .header h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .header h1 span { color: var(--primary); }
+    .header p { color: var(--text-muted); font-size: 0.85rem; margin-top: 0.25rem; }
+
+    /* Stats bar */
+    .stats-bar {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      padding: 1rem 2rem;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+    .stat {
+      text-align: center;
+    }
+    .stat-num {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    .stat-label {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .progress-bar-container {
+      width: 100%;
+      max-width: 600px;
+      margin: 0.5rem auto 0;
+      background: var(--surface2);
+      border-radius: 4px;
+      height: 6px;
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--primary));
+      border-radius: 4px;
+      transition: width 0.3s ease;
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 1rem 2rem;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+      position: sticky;
+      top: 80px;
+      z-index: 99;
+    }
+    .tab {
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 0.8rem;
+      font-weight: 500;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .tab:hover { border-color: var(--primary); color: var(--text); }
+    .tab.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .tab .badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.15);
+      padding: 0.1rem 0.4rem;
+      border-radius: 10px;
+      font-size: 0.65rem;
+      margin-left: 0.3rem;
+    }
+
+    /* Content */
+    .content { max-width: 1100px; margin: 0 auto; padding: 1.5rem; }
+
+    .section { display: none; }
+    .section.active { display: block; }
+
+    /* Session header */
+    .session-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin: 2rem 0 1rem;
+      padding: 1rem 1.5rem;
+      background: var(--surface);
+      border-radius: 10px;
+      border-left: 4px solid var(--primary);
+    }
+    .session-header.v { border-left-color: var(--v-color); }
+    .session-header.va { border-left-color: var(--va-color); }
+    .session-header.sm { border-left-color: var(--sm-color); }
+    .session-header.sma { border-left-color: var(--sma-color); }
+    .session-header.common { border-left-color: var(--common-color); }
+    .session-header.intro { border-left-color: var(--warning); }
+    .session-header h2 { font-size: 1.1rem; font-weight: 600; }
+    .session-header .count {
+      margin-left: auto;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      background: var(--surface2);
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+    }
+
+    /* Video card */
+    .video-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 0.75rem;
+      overflow: hidden;
+      transition: all 0.2s;
+    }
+    .video-card:hover { border-color: var(--primary-dim); }
+    .video-card.checked { opacity: 0.5; }
+    .video-card.checked .video-header { background: var(--accent-dim); }
+
+    .video-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      cursor: pointer;
+      user-select: none;
+    }
+    .video-header input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--accent);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .video-num {
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      background: var(--surface2);
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      flex-shrink: 0;
+      min-width: 30px;
+      text-align: center;
+    }
+    .video-title { font-weight: 600; font-size: 0.9rem; flex: 1; }
+    .video-duration {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      background: var(--surface2);
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+    .video-tag {
+      font-size: 0.6rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+    .tag-on-pole { background: var(--primary); color: #fff; }
+    .tag-off-pole { background: var(--common-color); color: #000; }
+    .tag-erreur { background: var(--danger); color: #fff; }
+    .tag-intro { background: var(--warning); color: #000; }
+
+    .video-expand {
+      cursor: pointer;
+      color: var(--text-muted);
+      font-size: 1.2rem;
+      transition: transform 0.2s;
+      flex-shrink: 0;
+      width: 24px;
+      text-align: center;
+    }
+    .video-card.open .video-expand { transform: rotate(180deg); }
+
+    .video-details {
+      display: none;
+      padding: 0 1rem 1rem;
+      border-top: 1px solid var(--border);
+    }
+    .video-card.open .video-details { display: block; }
+
+    /* Vimeo ID field */
+    .vimeo-field {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 0.75rem;
+      padding: 0.5rem 0.75rem;
+      background: var(--surface2);
+      border-radius: 6px;
+      border: 1px solid var(--border);
+    }
+    .vimeo-field label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--primary);
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+    .vimeo-field input {
+      flex: 1;
+      padding: 0.35rem 0.6rem;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text);
+      font-size: 0.8rem;
+      font-family: monospace;
+      outline: none;
+    }
+    .vimeo-field input:focus { border-color: var(--primary); }
+    .vimeo-field input::placeholder { color: var(--text-muted); opacity: 0.5; }
+    .vimeo-field .vimeo-status {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--border);
+      flex-shrink: 0;
+    }
+    .vimeo-field .vimeo-status.filled { background: var(--accent); }
+    .vimeo-field .vimeo-link {
+      font-size: 0.7rem;
+      color: var(--primary);
+      text-decoration: none;
+      white-space: nowrap;
+      display: none;
+    }
+    .vimeo-field .vimeo-link.visible { display: inline; }
+
+    .video-desc {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      margin-top: 0.75rem;
+      line-height: 1.7;
+    }
+    .video-desc strong { color: var(--text); }
+    .video-desc .step {
+      display: flex;
+      gap: 0.5rem;
+      margin: 0.3rem 0;
+    }
+    .video-desc .step-num {
+      color: var(--primary);
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .video-meta {
+      display: flex;
+      gap: 1rem;
+      margin-top: 0.75rem;
+      flex-wrap: wrap;
+    }
+    .meta-item {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+    .meta-item strong { color: var(--accent); }
+
+    /* Filming session cards */
+    .filming-session {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .filming-session h3 {
+      font-size: 1rem;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .filming-session .materiel {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      background: var(--surface2);
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      margin-top: 0.5rem;
+    }
+    .filming-session .materiel strong { color: var(--warning); }
+    .filming-session .duree {
+      display: inline-block;
+      background: var(--primary);
+      color: #fff;
+      padding: 0.2rem 0.6rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    /* Search */
+    .search-bar {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .search-bar input {
+      flex: 1;
+      padding: 0.6rem 1rem;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      font-size: 0.85rem;
+      outline: none;
+    }
+    .search-bar input:focus { border-color: var(--primary); }
+    .search-bar button {
+      padding: 0.6rem 1rem;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 0.8rem;
+    }
+    .search-bar button:hover { border-color: var(--primary); color: var(--text); }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .header { padding: 1rem; }
+      .header h1 { font-size: 1.1rem; }
+      .tabs { top: 65px; padding: 0.75rem 0.5rem; gap: 0.3rem; }
+      .tab { padding: 0.4rem 0.6rem; font-size: 0.7rem; }
+      .content { padding: 1rem 0.75rem; }
+      .stats-bar { gap: 0.75rem; padding: 0.75rem; }
+      .video-header { padding: 0.6rem 0.75rem; gap: 0.5rem; }
+      .video-title { font-size: 0.8rem; }
+      .video-tag { display: none; }
+    }
+
+    /* Print */
+    @media print {
+      .header, .tabs, .stats-bar, .search-bar { display: none; }
+      .section { display: block !important; }
+      .video-details { display: block !important; }
+      .video-card { break-inside: avoid; border: 1px solid #ccc; }
+      body { background: #fff; color: #000; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <h1><span>Plan de Tournage</span> — 4 Programmes Conditioning</h1>
+  <p>Vincent Regnault — Champion du Monde 2024 — vincentregnault.fr</p>
+</div>
+
+<div class="stats-bar">
+  <div class="stat">
+    <div class="stat-num" id="total-videos">109</div>
+    <div class="stat-label">Videos total</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num" id="checked-count">0</div>
+    <div class="stat-label">Filmees</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num" id="remaining-count">109</div>
+    <div class="stat-label">Restantes</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num" id="vimeo-count">0</div>
+    <div class="stat-label">Vimeo ID</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">~6h</div>
+    <div class="stat-label">Tournage</div>
+  </div>
+  <div style="width:100%">
+    <div class="progress-bar-container">
+      <div class="progress-bar-fill" id="progress-fill" style="width: 0%"></div>
+    </div>
+  </div>
+</div>
+
+<div style="display:flex; justify-content:center; gap:0.5rem; padding:0.5rem 2rem; background:var(--surface); border-bottom:1px solid var(--border); flex-wrap:wrap;">
+  <button onclick="exportJSON()" style="padding:0.4rem 1rem; border-radius:6px; border:1px solid var(--primary); background:transparent; color:var(--primary); cursor:pointer; font-size:0.75rem; font-weight:600;">Exporter JSON (Supabase)</button>
+  <button onclick="exportCSV()" style="padding:0.4rem 1rem; border-radius:6px; border:1px solid var(--accent); background:transparent; color:var(--accent); cursor:pointer; font-size:0.75rem; font-weight:600;">Exporter CSV</button>
+  <button onclick="clearAllVimeo()" style="padding:0.4rem 1rem; border-radius:6px; border:1px solid var(--danger); background:transparent; color:var(--danger); cursor:pointer; font-size:0.75rem; font-weight:600;">Reset Vimeo IDs</button>
+</div>
+
+<div class="tabs">
+  <div class="tab active" data-tab="overview">Vue d'ensemble</div>
+  <div class="tab" data-tab="common" style="border-color: var(--common-color)">Off-Pole Commun <span class="badge">40</span></div>
+  <div class="tab" data-tab="v" style="border-color: var(--v-color)">V (Inversion) <span class="badge">12</span></div>
+  <div class="tab" data-tab="va" style="border-color: var(--va-color)">V Aerien <span class="badge">16</span></div>
+  <div class="tab" data-tab="sm" style="border-color: var(--sm-color)">SM Sol <span class="badge">16</span></div>
+  <div class="tab" data-tab="sma" style="border-color: var(--sma-color)">SM Aerien <span class="badge">17</span></div>
+  <div class="tab" data-tab="intros" style="border-color: var(--warning)">Intros <span class="badge">8</span></div>
+</div>
+
+<div class="content">
+
+  <!-- SEARCH -->
+  <div class="search-bar">
+    <input type="text" id="search-input" placeholder="Rechercher un exercice...">
+    <button onclick="resetFilters()">Reset</button>
+  </div>
+
+  <!-- ==================== VUE D'ENSEMBLE ==================== -->
+  <section class="section active" id="section-overview">
+    <h2 style="font-size:1.2rem; margin-bottom:1.5rem;">Organisation du tournage</h2>
+
+    <div class="filming-session">
+      <h3>Session 1 — Face camera (sans barre) <span class="duree">~30 min</span></h3>
+      <p style="font-size:0.85rem; color:var(--text-muted);">4 intros programmes + securite/outro. Fond neutre, eclairage face.</p>
+      <div class="materiel"><strong>Materiel :</strong> Camera, micro-cravate, fond neutre</div>
+    </div>
+
+    <div class="filming-session">
+      <h3>Session 2 — Anatomie + overlays <span class="duree">~30 min</span></h3>
+      <p style="font-size:0.85rem; color:var(--text-muted);">3 videos anatomie avec demo sur barre + overlays muscles en post-prod.</p>
+      <div class="materiel"><strong>Materiel :</strong> Barre, camera, graphiques muscles (post-prod)</div>
+    </div>
+
+    <div class="filming-session">
+      <h3>Session 3 — On-Pole : V + V Aerien <span class="duree">~1h30</span></h3>
+      <p style="font-size:0.85rem; color:var(--text-muted);">Toutes les progressions d'inversion basique et aerienne + erreurs courantes.</p>
+      <div class="materiel"><strong>Materiel :</strong> Barre, crash mat, banc/step reglable, elastiques (leger + moyen + epais)</div>
+    </div>
+
+    <div class="filming-session">
+      <h3>Session 4 — On-Pole : SM Sol + SM Aerien <span class="duree">~2h</span></h3>
+      <p style="font-size:0.85rem; color:var(--text-muted);">Toutes les progressions shoulder mount (sol + aerien) + erreurs courantes.</p>
+      <div class="materiel"><strong>Materiel :</strong> Barre, crash mat, banc/step reglable, elastiques (leger + moyen + epais)</div>
+    </div>
+
+    <div class="filming-session">
+      <h3>Session 5 — Off-Pole (tout le commun) <span class="duree">~1h30</span></h3>
+      <p style="font-size:0.85rem; color:var(--text-muted);">40 exercices off-pole reutilises dans les 4 programmes. Filmer une seule fois.</p>
+      <div class="materiel"><strong>Materiel :</strong> Elastiques (leger + moyen), barre de traction, halteres, tapis de sol, ab wheel, serviette</div>
+    </div>
+
+    <div style="margin-top:2rem; padding:1.5rem; background:var(--surface); border-radius:10px; border:1px solid var(--border);">
+      <h3 style="font-size:1rem; margin-bottom:0.75rem;">Conseils de tournage</h3>
+      <ul style="font-size:0.85rem; color:var(--text-muted); list-style:none;">
+        <li style="margin-bottom:0.5rem;">- Filmer chaque exercice sous 2 angles : face + profil</li>
+        <li style="margin-bottom:0.5rem;">- Pour les erreurs : filmer d'abord la mauvaise execution, puis la bonne</li>
+        <li style="margin-bottom:0.5rem;">- Commencer par les exercices les moins fatiguants</li>
+        <li style="margin-bottom:0.5rem;">- Prevoir 5 min de repos entre les demos d'inversion/SM</li>
+        <li style="margin-bottom:0.5rem;">- Cocher les videos filmees pour suivre ta progression</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ==================== OFF-POLE COMMUN ==================== -->
+  <section class="section" id="section-common">
+
+    <div class="session-header common">
+      <h2>Echauffement</h2>
+      <span class="count">5 videos</span>
+    </div>
+
+    <div class="video-card" data-id="1">
+      <div class="video-header" onclick="toggleCard(this)">
+        <input type="checkbox" onclick="event.stopPropagation(); updateProgress()">
+        <span class="video-num">1</span>
+        <span class="video-tag tag-off-pole">Off-Pole</span>
+        <span class="video-title">Mobilite epaules : cercles + pass-throughs elastique</span>
+        <span class="video-duration">30s</span>
+        <span class="video-expand">&#9660;</span>
+      </div>
+      <div class="video-details">
+        <div class="video-desc">
+          <div class="step"><span class="step-num">1.</span> Debout, bras le long du corps. Faire 10 grands cercles vers l'avant avec les deux bras simultanement, puis 10 vers l'arriere.</div>
+          <div class="step"><span class="step-num">2.</span> Prendre un elastique (ou un baton) en prise large devant soi, bras tendus. Passer l'elastique par-dessus la tete et derriere le dos en gardant les bras tendus, puis revenir devant.</div>
+          <div class="step"><span class="step-num">3.</span> <strong>Cle :</strong> Plus la prise est large, plus c'est facile. Resserrer progressivement les mains au fil des semaines.</div>
+        </div>
+        <div class="video-meta">
+          <span class="meta-item">Utilise dans : <strong>Tous les programmes</strong></span>
+          <span class="meta-item">Reps : <strong>10 reps chaque</strong></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="video-card" data-id="2">
+      <div class="video-header" onclick="toggleCard(this)">
+        <input type="checkbox" onclick="event.stopPropagation(); updateProgress()">
+        <span class="video-num">2</span>
+        <span class="video-tag tag-off-pole">Off-Pole</span>
+        <span class="video-title">Rotation externe elastique</span>
+        <span class="video-duration">30s</span>
+        <span class="video-expand">&#9660;</span>
+      </div>
+      <div class="video-details">
+        <div class="video-desc">
+          <div class="step"><span class="step-num">1.</span> Debout, coude colle au corps a 90 degres, elastique dans la main. L'autre extremite fixee a un point d'ancrage a hauteur du coude (ou tenue par l'autre main).</div>
+          <div class="step"><span class="step-num">2.</span> Sans decoller le coude du torse, tourner l'avant-bras vers l'exterieur en resistance contre l'elastique. Revenir lentement.</div>
+          <div class="step"><span class="step-num">3.</span> <strong>Cle :</strong> Mouvement LENT et controle. Le coude ne bouge PAS. C'est un exercice de pre-hab — pas de charge lourde.</div>
+        </div>
+        <div class="video-meta">
+          <span class="meta-item">Utilise dans : <strong>Tous les programmes</strong></span>
+          <span class="meta-item">Reps : <strong>15/cote</strong></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="video-card" data-id="3">
+      <div class="video-header" onclick="toggleCard(this)">
+        <input type="checkbox" onclick="event.stopPropagation(); updateProgress()">
+        <span class="video-num">3</span>
+        <span class="video-tag tag-off-pole">Off-Pole</span>
+        <span class="video-title">Pull-apart elastique (activation lats)</span>
+        <span class="video-duration">30s</span>
+        <span class="video-expand">&#9660;</span>
+      </div>
+      <div class="video-details">
+        <div class="video-desc">
+          <div class="step"><span class="step-num">1.</span> Debout, bras tendus devant soi a hauteur des epaules, elastique tenu aux deux extremites en prise pronation.</div>
+          <div class="step"><span class="step-num">2.</span> Ecarter les bras lateralement en tirant l'elastique jusqu'a toucher la poitrine, en serrant les omoplates l'une contre l'autre.</div>
+          <div class="step"><span class="step-num">3.</span> <strong>Cle :</strong> Initier le mouvement avec les omoplates (retraction scapulaire), pas avec les bras. Garder les epaules BASSES tout le mouvement.</div>
+        </div>
+        <div class="video-meta">
+          <span class="meta-item">Utilise dans : <strong>SM Sol, SM Aerien, V Aerien</strong></span>
+          <span class="meta-item">Reps : <strong>15 reps</strong></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="video-card" data-id="4">
+      <div class="video-header" onclick="toggleCard(this)">
+        <input type="checkbox" onclick="event.stopPropagation(); updateProgress()">
+        <span class="video-num">4</span>
+        <span class="video-tag tag-off-pole">Off-Pole</span>
+        <span class="video-title">Dead bug (activation core)</span>
+        <span class="video-duration">30s</span>
+        <span class="video-expand">&#9660;</span>
+      </div>
+      <div class="video-details">
+        <div class="video-desc">
+          <div class="step"><span class="step-num">1.</span> Allonge sur le dos, bras tendus vers le plafond, genoux plies a 90 degres (tibias paralleles au sol).</div>
+          <div class="step"><span class="step-num">2.</span> Tendre le bras droit derriere la tete ET la jambe gauche vers le sol simultanement, sans que le bas du dos decolle du sol.</div>
+          <div class="step"><span class="step-num">3.</span> <strong>Cle :</strong> Le bas du dos doit rester COLLE au sol pendant tout le mouvement. Si le dos se cambre, reduire l'amplitude.</div>
+        </div>
+        <div class="video-meta">
+          <span class="meta-item">Utilise dans : <strong>V, V Aerien</strong></span>
+          <span class="meta-item">Reps : <strong>10/cote</strong></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="video-card" data-id="5">
+      <div class="video-header" onclick="toggleCard(this)">
+        <input type="checkbox" onclick="event.stopPropagation(); updateProgress()">
+        <span class="video-num">5</span>
+        <span class="video-tag tag-off-pole">Off-Pole</span>
+        <span class="video-title">Planche (gainage)</span>
+        <span class="video-duration">20s</span>
+        <span class="video-expand">&#9660;</span>
+      </div>
+      <div class="video-details">
+        <div class="video-desc">
+          <div class="step"><span class="step-num">1.</span> Position de pompe, appui sur les avant-bras et les pointes de pieds. Corps parfaitement droit de la tete aux talons.</div>
+          <div class="step"><span class="step-num">2.</span> Contracter les abdos (rentrer le nombril), serrer les fessiers, garder les epaules au-dessus des coudes.</div>
+          <div class="step"><span class="step-num">3.</span> <strong>Cle :</strong> Pas de fesses en l'air, pas de dos qui s'affaisse. Imaginer une ligne droite. Respirer normalement.</div>
+        </div>
+        <div class="video-meta">
+          <span class="meta-item">Utilise dans : <strong>Tous les programmes</strong></span>
+          <span class="meta-item">Duree : <strong>30-60 sec</strong></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- FORCE HAUTE -->
+    <div class="session-header common">
+      <h2>Force haute (grip, lats, epaules)</h2>
+      <span class="count">12 videos</span>
+    </div>
+
+    <div class="video-card" data-id="6">
+      <div class="video-header" onclick="toggleCard(this)">
+        <input type="checkbox" onclick="event.stopPropagation(); updateProgress()">
+        <span class="video-num">6</span>
+        <span class="video-tag tag-off-pole">Off-Pole</span>
+        <span class="video-title">Dead hang (barre de traction)</span>
+        <span class="video-duration">30s</span>
+        <span class="video-expand">&#9660;</span>
+      </div>
+      <div class="video-details">
+        <div class="video-desc">
+          <div class="step"><span class="step-num">1.</span> Attraper la barre de traction en prise pronation (paumes vers l'avant), mains ecartees a largeur d'epaules. Se suspendre bras tendus, pieds decollent du sol.</div>
+          <div class="step"><span class="step-num">2.</span> Laisser le corps pendre naturellement. Epaules relachees (dead hang passif) ou epaules engagees vers le bas (dead hang actif).</div>
+          <div class="step"><span class="step-num">3.</span> <strong>Cle :</strong> Tenir le plus longtemps possible. Objectif : 30s (debutant) a 60s+ (avance). Renforce le grip, decompresse la colonne, prepare aux tractions.</div>
+        </div>
+        <div class="video-meta">
+          <span class="meta-item">Utilise dans : <strong>V, V Aerien</strong></span>
+          <span class="meta-item">Duree : <strong>30-60 sec max</strong></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="video-card" data-id="7">
+      <div class="video-header" onclick="toggleCard(this)">
+        <input type="checkbox" onclick="event.stopPropagation(); updateProgress()">
+        <span class="video-num">7</span>
+        <span class="video-tag tag-off-pole">Off-Pole</span>
+        <span class="video-title">Dead hang un bras</span>
+        <span class="video-duration">30s</span>
+        <span class="video-expand">&#9660;</span>
+      </div>
+      <div class="video-details">
+        <div class="video-desc">
+          <div class="step"><span class="step-num">1.</span> Se suspendre a la barre avec UNE seule main, prise pronation. L'autre bras le long du corps ou legerement sur le cote pour l'equilibre.</div>
+          <div class="step"><span class="step-num">2.</span> Garder le corps droit sans tourner. Tenir le plus longtemps possible, puis changer de main.</div>
+          <div class="step"><span class="step-num">3.</span> <strong>Regression :</strong> Garder les doigts de l'autre main sur la barre en assistance. <strong>Cle :</strong> Engage le grip unilateral comme sur la barre de pole.</div>
+        </div>
+        <div class="video-meta">
+          <span class="meta-item">Utilise dans : <strong>V, V Aerien</strong></span>
+          <span class="meta-item">Duree : <strong>max / cote</strong></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="video-card" data-id="8">
+      <div class="video-header" onclick="toggleCard(this)">
+        <input type="checkbox" onclick="event.stopPropagation(); updateProgress()">
+        <span class="video-num">8</span>
+        <span class="video-tag tag-off-pole">Off-Pole</span>
+        <span class="video-title">Flexed arm hang</span>
+        <span class="video-duration">30s</span>
+        <span class="video-expand">&#9660;</span>
+      </div>
+      <div class="video-details">
+        <div class="video-desc">
+          <div class="step"><span class="step-num">1.</span> Monter (en sautant ou avec un banc) jusqu'a ce que le menton soit AU-DESSUS de la barre. Prise supination (paumes vers soi) ou pronation.</div>
+          <div class="step"><span class="step-num">2.</span> TENIR cette position le plus longtemps possible. Les coudes sont flechis, les biceps et lats travaillent en isometrique.</div>
+          <div class="step"><span class="step-num">3.</span> <strong>Cle :</strong> Ne pas se laisser descendre. Serrer les omoplates, tirer les coudes vers les hanches. Excellent pour construire la force de traction.</div>
+        </div>
+        <div class="video-meta">
+          <span class="meta-item">Utilise dans : <strong>V, V Aerien</strong></span>
+          <span class="meta-item">Duree : <strong>max</strong></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="video-card" data-id="9">
+      <div class="video-header" onclick="toggleCard(this)">
+        <input type="checkbox" onclick="event.stopPropagation(); updateProgress()">
+        <span class="video-num">9</span>
+        <span class="video-tag tag-off-pole">Off-Pole</span>
+        <span class="video-title">Tractions (pull-ups)</span>
+        <span class="video-duration">45s</span>
+        <span class="video-expand">&#9660;</span>
+      </div>
+      <div class="video-details">
+        <div class="video-desc">
+          <div class="step"><span class="step-num">1.</span> Suspendre a la barre, prise pronation (paumes vers l'avant) largeur d'epaules ou plus large. Dead hang complet en position basse.</div>
+          <div class="step"><span class="step-num">2.</span> Tirer le corps vers le haut en amenant le menton au-dessus de la barre. Initier le mouvement avec les LATS (pas les biceps) — imaginer tirer les coudes vers les hanches.</div>
+          <div class="step"><span class="step-num">3.</span> Descendre LENTEMENT en controlant (2-3 sec) jusqu'au dead hang complet. <strong>Cle :</strong> Extension complete en bas, menton au-dessus en haut. Pas de kipping (balancement).</div>
+        </div>
+        <div class="video-meta">
+          <span class="meta-item">Utilise dans : <strong>Tous les programmes</strong></span>
+          <span class="meta-item">Reps : <strong>4x 5-10</strong></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="video-card" data-id="10">
+      <div class="video-header" onclick="toggleCard(this)">
+        <input type="checkbox" onclick="event.stopPropagation(); updateProgress()">
+        <span class="video-num">10</span>
+        <span class="video-tag tag-off-pole">Off-Pole</span>
+        <span class="video-title">Tractions assistees (elastique)</span>
+        <span class="video-duration">30s</span>
+        <span class="video-expand">&#9660;</span>
+      </div>
+      <div class="video-details">
+        <div class="video-desc">
+          <div class="step"><span class="step-num">1.</span> Fixer un elastique epais a la barre de traction. Placer un pied (ou genou) dans la boucle de l'elastique.</div>
+          <div class="step"><span class="step-num">2.</span> Effectuer des tractions normales — l'elastique aide a remonter en fournissant une assistance proportionnelle a l'etirement.</div>
+          <div class="step"><span class="step-num">3.</span> <strong>Progression :</strong> Elastique epais → moyen → fin → sans elastique. <strong>Cle :</strong> Meme technique que les tractions normales. Ne pas se reposer sur l'elastique.</div>
+        </div>
+        <div class="video-meta">
+          <span class="meta-item">Utilise dans : <strong>Tous (regression)</strong></span>
+          <span class="meta-item">Reps : <strong>4x 5-8</strong></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="video-card" data-id="11">
+      <div class="video-header" onclick="toggleCard(this)">
+        <input type="checkbox" onclick="event.stopPropagation(); updateProgress()">
+        <span class="video-num">11</span>
+        <span class="video-tag tag-off-pole">Off-Pole</span>
+        <span class="video-title">Lat pulldown unilateral (elastique)</span>
+        <span class="video-duration">30s</span>
+        <span class="video-expand">&#9660;</span>
+      </div>
+      <div class="video-details">
+        <div class="video-desc">
+          <div class="step"><span class="step-num">1.</span> Fixer un elastique en hauteur (barre haute, porte, crochet). A genoux ou debout, prendre l'elastique d'UNE main, bras tendu vers le haut.</div>
+          <div class="step"><span class="step-num">2.</span> Tirer le coude vers le bas et vers la hanche en contractant le grand dorsal. L'autre main sur la hanche ou sur le genou oppose.</div>
+          <div class="step"><span class="step-num">3.</span> <strong>Cle :</strong> Sentir le lat (muscle sous l'aisselle) se contracter. Mouvement lent, 2s a la montee, 2s a la descente. Travaille l'asymetrie gauche/droite.</div>
+        </div>
+        <div class="video-meta">
+          <span class="meta-item">Utilise dans : <strong>V Aerien, SM Sol, SM Aerien</strong></span>
+          <span class="meta-item">Reps : <strong>3x 10/cote</strong></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="video-card" data-id="12">
+      <div class="video-header" onclick="toggleCard(this)">
+        <input type="checkbox" onclick="event.stopPropagation(); updateProgress()">
+        <span class="video-num">12</span>
+        <span class="video-tag tag-off-pole">Off-Pole</span>
+        <span class="video-title">Lat pulldown elastique (deux bras)</span>
+        <span class="video-duration">30s</span>
+        <span class="video-expand">&#9660;</span>
+      </div>
+      <div class="video-details">
+        <div class="video-desc">
+          <div class="step"><span class="step-num">1.</span> Elastique fixe en hauteur. A genoux ou assis, prendre l'elastique des deux mains, bras tendus au-dessus de la tete.</div>
+          <div class="step"><span class="step-num">2.</span> Tirer les deux coudes vers le bas et vers les hanches en contractant les lats bilateralement. Amener les mains au niveau des epaules.</div>
+          <div class="step"><span class="step-num">3.</span> <strong>Cle :</strong> Garder la poitrine ouverte, ne pas se pencher en avant. Sentir les lats travailler sous les aisselles.</div>
+        </div>
+        <div class="video-meta">
+          <span class="meta-item">Utilise dans : <strong>V</strong></span>
+          <span class="meta-item">Reps : <strong>3x 12</strong></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="video-card" data-id="13">
+      <div class="video-header" onclick="toggleCard(this)">
+        <input type="checkbox" onclick="event.stopPropagation(); updateProgress()">
+        <span class="video-num">13</span>
+        <span class="video-tag tag-off-pole">Off-Pole</span>
+        <span class="video-title">Rowing inverse (bodyweight / TRX)</span>
+        <span class="video-duration">30s</span>
+        <span class="video-expand">&#9660;</span>
+      </div>
+      <div class="video-details">
+        <div class="video-desc">
+          <div class="step"><span class="step-num">1.</span> Se placer SOUS une barre basse (ou TRX). Corps droit, talons au sol, mains en prise pronation sur la barre, bras tendus.</div>
+          <div class="step"><span class="step-num">2.</span> Tirer la poitrine vers la barre en serrant les omoplates. Le corps reste droit comme une planche — PAS de cassure aux hanches.</div>
+          <div class="step"><span class="step-num">3.</span> <strong>Cle :</strong> Plus le corps est horizontal, plus c'est dur. Pour faciliter : plier les genoux ou relever le buste. Renforce le dos, les rhomboides et les trapezes.</div>
+        </div>
+        <div class="video-meta">
+          <span class="meta-item">Utilise dans : <strong>V, SM Sol</strong></span>
+          <span class="meta-item">Reps : <strong>3x 10-12</strong></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="video-card" data-id="14">
+      <div class="video-header" onclick="toggleCard(this)">
+        <input type="checkbox" onclick="event.stopPropagation(); updateProgress()">
+        <span class="video-num">14</span>
+        <span class="video-tag tag-off-pole">Off-Pole</span>
+        <span class="video-title">Rowing un bras (haltere)</span>
+        <span class="video-duration">30s</span>
+        <span class="video-expand">&#9660;</span>
+      </div>
+      <div class="video-details">
+        <div class="video-desc">
+          <div class="step"><span class="step-num">1.</span> Un genou et une main sur un banc (cote oppose). L'autre pied au sol, haltere dans la main libre, bras tendu vers le sol.</div>
+          <div class="step"><span class="step-num">2.</span> Tirer l'haltere vers la HANCHE (pas vers l'epaule) en gardant le coude pres du corps. Serrer l'omoplate en haut du mouvement.</div>
+          <div class="step"><span class="step-num">3.</span> <strong>Cle :</strong> Le dos reste PLAT et horizontal. Ne pas tourner le torse. Sentir le lat et le rhomboide travailler. Descente controlee 2-3 sec.</div>
+        </div>
+        <div class="video-meta">
+          <span class="meta-item">Utilise dans : <strong>V Aerien, SM Aerien</strong></span>
+          <span class="meta-item">Reps : <strong>3x 10/cote</strong></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="video-card" data-id="15">
+      <div class="video-header" onclick="toggleCard(this)">
+        <input type="checkbox" onclick="event.stopPropagation(); updateProgress()">
+        <span class="video-num">15</span>
+        <span class="video-tag tag-off-pole">Off-Pole</span>
+        <span class="video-title">Face pull (elastique)</span>
+        <span class="video-duration">30s</span>
+        <span class="video-expand">&#9660;</span>
+      </div>
+      <div class="video-details">
+        <div class="video-desc">
+          <div class="step"><span class="step-num">1.</span> Elastique fixe a hauteur du visage. Debout face au point d'ancrage, prendre l'elastique des deux mains en prise neutre, bras tendus devant.</div>
+          <div class="step"><span class="step-num">2.</span> Tirer l'elastique vers le VISAGE en ecartant les coudes et en tournant les mains vers l'exterieur (rotation externe). Finir avec les mains de chaque cote de la tete.</div>
+          <div class="step"><span class="step-num">3.</span> <strong>Cle :</strong> Exercice ESSENTIEL pour la sante des epaules. Serrer les omoplates en position finale. Mouvement lent et controle, pas de a-coups.</div>
+        </div>
+        <div class="video-meta">
+          <span class="meta-item">Utilise dans : <strong>Tous les programmes</strong></span>
+          <span class="meta-item">Reps : <strong>3x 15</strong></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="video-card" data-id="16">
+      <div class="video-header" onclick="toggleCard(this)">
+        <input type="checkbox" onclick="event.stopPropagation(); updateProgress()">
+        <span class="video-num">16</span>
+        <span class="video-tag tag-off-pole">Off-Pole</span>
+        <span class="video-title">Push-ups (pompes)</span>
+        <span class="video-duration">30s</span>
+        <span class="video-expand">&#9660;</span>
+      </div>
+      <div class="video-details">
+        <div class="video-desc">
+          <div class="step"><span class="step-num">1.</span> Position de planche, mains legerement plus larges que les epaules, doigts vers l'avant. Corps droit de la tete aux pieds.</div>
+          <div class="step"><span class="step-num">2.</span> Descendre en pliant les coudes jusqu'a ce que la poitrine frole le sol. Les coudes forment un angle de 45 degres avec le corps (pas ecartes a 90 deg).</div>
+          <div class="step"><span class="step-num">3.</span> <strong>Cle pour le pole :</strong> Focus sur le SERRAGE des coudes vers le corps — ca reproduit l'adduction necessaire au shoulder mount. Garder le core engage.</div>
+        </div>
+        <div class="video-meta">
+          <span class="meta-item">Utilise dans : <strong>SM Sol, SM Aerien</strong></span>
+          <span class="meta-item">Reps : <strong>3x 10-15</strong></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="video-card" data-id="17">
+      <div class="video-header" onclick="toggleCard(this)">
+        <input type="checkbox" onclick="event.stopPropagation(); updateProgress()">
+        <span class="video-num">17</span>
+        <span class="video-tag tag-off-pole">Off-Pole</span>
+        <span class="video-title">Chest fly / Chest squeeze (elastique ou halteres)</span>
+        <span class="video-duration">30s</span>
+        <span class="video-expand">&#9660;</span>
+      </div>
+      <div class="video-details">
+        <div class="video-desc">
+          <div class="step"><span class="step-num">1.</span> Allonge sur le dos (ou debout avec elastique derriere le dos), bras tendus au-dessus de la poitrine, haltere dans chaque main (ou elastique).</div>
+          <div class="step"><span class="step-num">2.</span> Ouvrir les bras sur les cotes en gardant les coudes legerement flechis, puis ramener les mains au-dessus de la poitrine en "serrant" (adduction).</div>
+          <div class="step"><span class="step-num">3.</span> <strong>Cle :</strong> Le mouvement de serrage est identique a celui de rapprocher les coudes au shoulder mount. Descente LENTE, montee controlee.</div>
+        </div>
+        <div class="video-meta">
+          <span class="meta-item">Utilise dans : <strong>SM Sol, SM Aerien</strong></span>
+          <span class="meta-item">Reps : <strong>3x 12</strong></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRE-HAB -->
+    <div class="session-header common">
+      <h2>Pre-hab epaules</h2>
+      <span class="count">5 videos</span>
+    </div>
+
+    <div class="video-card" data-id="18">
+      <div class="video-header" onclick="toggleCard(this)">
+        <input type="checkbox" onclick="event.stopPropagation(); updateProgress()">
+        <span class="video-num">18</span>
+        <span class="video-tag tag-off-pole">Off-Pole</span>
+        <span class="video-title">Rotation externe coude au corps (elastique)</span>
+        <span class="video-duration">30s</span>
+        <span class="video-expand">&#9660;</span>
+      </div>
+      <div class="video-details">
+        <div class="video-desc">
+          <div class="step"><span class="step-num">1.</span> Identique a l'exercice d'echauffement (#2) mais en version renforcee avec plus de resistance. Coude colle au corps a 90 deg.</div>
+          <div class="step"><span class="step-num">2.</span> Tourner l'avant-bras vers l'exterieur contre la resistance de l'elastique. 3 secondes pour ouvrir, 3 secondes pour revenir.</div>
+          <div class="step"><span class="step-num">3.</span> <strong>Cle :</strong> Placer une serviette roulee entre le coude et le torse pour garantir le bon placement. Protege la coiffe des rotateurs.</div>
+        </div>
+        <div class="video-meta">
+          <span class="meta-item">Utilise dans : <strong>Tous les programmes</strong></span>
+          <span class="meta-item">Reps : <strong>3x 15/cote</strong></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="video-card" data-id="19">
+      <div class="video-header" onclick="toggleCard(this)">
+        <input type="checkbox" onclick="event.stopPropagation(); updateProgress()">
+        <span class="video-num">19</span>
+        <span class="video-tag tag-off-pole">Off-Pole</span>
+        <span class="video-title">Rotation externe bras a 90 deg (elastique)</span>
+        <span class="video-duration">30s</span>
+        <span class="video-expand">&#9660;</span>
+      </div>
+      <div class="video-details">
+        <div class="video-desc">
+          <div class="step"><span class="step-num">1.</span> Debout, bras leve sur le cote a 90 deg du corps, coude plie a 90 deg (avant-bras pointe vers le sol). Elastique fixe a hauteur du coude.</div>
+          <div class="step"><span class="step-num">2.</span> Sans bouger le coude, tourner l'avant-bras vers le HAUT jusqu'a ce qu'il pointe vers le plafond (rotation externe).</div>
+          <div class="step"><span class="step-num">3.</span> <strong>Cle :</strong> Le coude reste FIXE a 90 deg, seul l'avant-bras tourne. Mouvement lent. Cible specifiquement les muscles de la coiffe des rotateurs en position de stress.</div>
+        </div>
+        <div class="video-meta">
+          <span class="meta-item">Utilise dans : <strong>V, V Aerien, SM Aerien</strong></span>
+          <span class="meta-item">Reps : <strong>3x 12/cote</strong></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="video-card" data-id="20">
+      <div class="video-header" onclick="toggleCard(this)">
+        <input type="checkbox" onclick="event.stopPropagation(); updateProgress()">
+        <span class="video-num">20</span>
+        <span class="video-tag tag-off-pole">Off-Pole</span>
+        <span class="video-title">Scapula pull-ups</span>
+        <span class="video-duration">30s</span>
+        <span class="video-expand">&#9660;</span>
+      </div>
+      <div class="video-details">
+        <div class="video-desc">
+          <div class="step"><span class="step-num">1.</span> Suspendre a la barre de traction en dead hang, bras TENDUS (pas de flexion des coudes).</div>
+          <div class="step"><span class="step-num">2.</span> SANS plier les coudes, abaisser les omoplates (depression scapulaire) — le corps monte legerement de quelques centimetres.</div>
+          <div class="step"><span class="step-num">3.</span> <strong>Cle :</strong> Les bras restent tendus tout le temps. Seules les omoplates bougent. C'est subtil mais essentiel — ca apprend a engager les epaules en suspension, exactement comme sur la barre.</div>
+        </div>
+        <div class="video-meta">
+          <span class="meta-item">Utilise dans : <strong>V, V Aerien, SM Sol</strong></span>
+          <span class="meta-item">Reps : <strong>3x 10</strong></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="video-card" data-id="21">
+      <div class="video-header" onclick="toggleCard(this)">
+        <input type="checkbox" onclick="event.stopPropagation(); updateProgress()">
+        <span class="video-num">21</span>
+        <span class="video-tag tag-off-pole">Off-Pole</span>
+        <span class="video-title">Scapula push-ups</span>
+        <span class="video-duration">30s</span>
+        <span class="video-expand">&#9660;</span>
+      </div>
+      <div class="video-details">
+        <div class="video-desc">
+          <div class="step"><span class="step-num">1.</span> Position de pompe, bras tendus. SANS plier les coudes, laisser le torse descendre entre les omoplates (retraction scapulaire).</div>
+          <div class="step"><span class="step-num">2.</span> Puis pousser le sol en ecartant les omoplates (protraction scapulaire) — le haut du dos s'arrondit legerement.</div>
+          <div class="step"><span class="step-num">3.</span> <strong>Cle :</strong> Les bras restent tendus. Seules les omoplates bougent (5-10 cm d'amplitude). Renforce le serratus anterior, essentiel pour la stabilite de l'epaule.</div>
+        </div>
+        <div class="video-meta">
+          <span class="meta-item">Utilise dans : <strong>SM Aerien</strong></span>
+          <span class="meta-item">Reps : <strong>3x 12</strong></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="video-card" data-id="22">
+      <div class="video-header" onclick="toggleCard(this)">
+        <input type="checkbox" onclick="event.stopPropagation(); updateProgress()">
+        <span class="video-num">22</span>
+        <span class="video-tag tag-off-pole">Off-Pole</span>
+        <span class="video-title">YTWL au sol</span>
+        <span class="video-duration">30s</span>
+        <span class="video-expand">&#9660;</span>
+      </div>
+      <div class="video-details">
+        <div class="video-desc">
+          <div class="step"><span class="step-num">1.</span> Allonge sur le ventre, front au sol. Effectuer 4 positions differentes en levant les bras du sol :</div>
+          <div class="step"><span class="step-num">Y</span> Bras tendus au-dessus de la tete en forme de Y. Lever et tenir 2 sec. 8 reps.</div>
+          <div class="step"><span class="step-num">T</span> Bras tendus sur les cotes (perpendiculaires au corps). Lever et tenir 2 sec. 8 reps.</div>
+          <div class="step"><span class="step-num">W</span> Coudes plies a 90 deg, bras sur les cotes en forme de W. Lever et serrer les omoplates. 8 reps.</div>
+          <div class="step"><span class="step-num">L</span> Bras sur les cotes, coudes a 90 deg, avant-bras vers l'avant. Rotation externe (avant-bras vers le plafond). 8 reps.</div>
+          <div class="step"><strong>Cle :</strong> Active tous les muscles stabilisateurs de l'epaule. Mouvement lent, contractions de 2 sec en haut.</div>
+        </div>
+        <div class="video-meta">
+          <span class="meta-item">Utilise dans : <strong>SM Sol</strong></span>
+          <span class="meta-item">Reps : <strong>2x 8 chaque position</strong></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CORE -->
+    <div class="session-header common">
+      <h2>Core</h2>
+      <span class="count">8 videos</span>
+    </div>
+
+    <div class="video-card" data-id="23">
+      <div class="video-header" onclick="toggleCard(this)">
+        <input type="checkbox" onclick="event.stopPropagation(); updateProgress()">
+        <span class="video-num">23</span>
+        <span class="video-tag tag-off-pole">Off-Pole</span>
+        <span class="video-title">Hollow body hold</span>
+        <span class="video-duration">30s</span>
+        <span class="video-expand">&#9660;</span>
+      </div>
+      <div class="video-details">
+        <div class="video-desc">
+          <div class="step"><span class="step-num">1.</span> Allonge sur le dos, bras tendus au-dessus de la tete, jambes tendues. Plaquer le bas du dos au sol en contractant les abdos.</div>
+          <div class="step"><span class="step-num">2.</span> Lever les bras, la tete, les epaules ET les jambes a quelques centimetres du sol. Le corps forme une "banane" creuse.</div>
+          <div class="step"><span class="step-num">3.</span> <strong>Cle :</strong> Le BAS DU DOS doit rester colle au sol — c'est LE critere. Si le dos se cambre, plier les genoux ou lever les jambes plus haut. Position fondamentale pour l'inversion.</div>
+        </div>
+        <div class="video-meta">
+          <span class="meta-item">Utilise dans : <strong>Tous les programmes</strong></span>
+          <span class="meta-item">Duree : <strong>15-30 sec</strong></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="video-card" data-id="24">
+      <div class="video-header" onclick="toggleCard(this)">
+        <input type="checkbox" onclick="event.stopPropagation(); updateProgress()">
+        <span class="video-num">24</span>
+        <span class="video-tag tag-off-pole">Off-Pole</span>
+        <span class="video-title">Dead bug (renforcement)</span>
+        <span class="video-duration">30s</span>
+        <span class="video-expand">&#9660;</span>
+      </div>
+      <div class="video-details">
+        <div class="video-desc">
+          <div class="step"><span class="step-num">1.</span> Meme position que l'echauffement (#4) mais en version renforcee : amplitude complete, tempo plus lent (3 sec pour etendre, 3 sec pour revenir).</div>
+          <div class="step"><span class="step-num">2.</span> Option avancee : tenir un medecine ball entre les mains et genoux au depart, puis etendre bras/jambe opposes.</div>
+          <div class="step"><span class="step-num">3.</span> <strong>Cle :</strong> Exercice fondamental d'anti-extension. Apprend au core a stabiliser le tronc quand les membres bougent — exactement ce qui se passe en inversion.</div>
+        </div>
+        <div class="video-meta">
+          <span class="meta-item">Utilise dans : <strong>V, V Aerien, SM Sol</strong></span>
+          <span class="meta-item">Reps : <strong>3x 10/cote</strong></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="video-card" data-id="25">
+      <div class="video-header" onclick="toggleCard(this)">
+        <input type="checkbox" onclick="event.stopPropagation(); updateProgress()">
+        <span class="video-num">25</span>
+        <span class="video-tag tag-off-pole">Off-Pole</span>
+        <span class="video-title">Ab wheel rollout</span>
+        <span class="video-duration">30s</span>
+        <span class="video-expand">&#9660;</span>
+      </div>
+      <div class="video-details">
+        <div class="video-desc">
+          <div class="step"><span class="step-num">1.</span> A genoux sur un tapis, mains sur l'ab wheel devant les genoux. Core engage, dos plat.</div>
+          <div class="step"><span class="step-num">2.</span> Rouler la roue vers l'AVANT en etendant les bras et les hanches. Descendre le plus loin possible SANS que le dos se cambre.</div>
+          <div class="step"><span class="step-num">3.</span> Ramener la roue en contractant les abdos. <strong>Cle :</strong> C'est un exercice d'ANTI-EXTENSION — le core resiste a la cambrure. Exactement le meme schema que monter en inversion. Commencer avec une amplitude reduite.</div>
+        </div>
+        <div class="video-meta">
+          <span class="meta-item">Utilise dans : <strong>V Aerien, SM Aerien</strong></span>
+          <span class="meta-item">Reps : <strong>3x 8-10</strong></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="video-card" data-id="26">
+      <div class="video-header" onclick="toggleCard(this)">
+        <input type="checkbox" onclick="event.stopPropagation(); updateProgress()">
+        <span class="video-num">26</span>
+        <span class="video-tag tag-off-pole">Off-Pole</span>
+        <span class="video-title">Planche un bras (anti-rotation)</span>
+        <span class="video-duration">30s</span>
+        <span class="video-expand">&#9660;</span>
+      </div>
+      <div class="video-details">
+        <div class="video-desc">
+          <div class="step"><span class="step-num">1.</span> Position de planche sur les avant-bras. Lever UNE main du sol (main sur la hanche ou dans le dos).</div>
+          <div class="step"><span class="step-num">2.</span> Le corps doit rester PARFAITEMENT droit — resister a la rotation du torse. Tenir 15 sec puis changer de cote.</div>
+          <div class="step"><span class="step-num">3.</span> <strong>Cle :</strong> Les hanches ne tournent PAS. Engager les obliques pour resister. Plus les pieds sont ecartes, plus c'est facile (base de support plus large).</div>
+        </div>
+        <div class="video-meta">
+          <span class="meta-item">Utilise dans : <strong>V, V Aerien, SM Aerien</strong></span>
+          <span class="meta-item">Duree : <strong>3x 15 sec/cote</strong></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="video-card" data-id="27">
+      <div class="video-header" onclick="toggleCard(this)">
+        <input type="checkbox" onclick="event.stopPropagation(); updateProgress()">
+        <span class="video-num">27</span>
+        <span class="video-tag tag-off-pole">Off-Pole</span>
+        <span class="video-title">Pallof press (elastique)</span>
+        <span class="video-duration">30s</span>
+        <span class="video-expand">&#9660;</span>
+      </div>
+      <div class="video-details">
+        <div class="video-desc">
+          <div class="step"><span class="step-num">1.</span> Debout ou a genoux, elastique fixe lateralement a hauteur de la poitrine. Tenir l'elastique des deux mains devant la poitrine.</div>
+          <div class="step"><span class="step-num">2.</span> Pousser les mains DEVANT soi en tendant les bras, puis ramener a la poitrine. L'elastique essaie de tourner le torse — RESISTER.</div>
+          <div class="step"><span class="step-num">3.</span> <strong>Cle :</strong> Le corps ne tourne PAS. Les hanches et les epaules restent face a l'avant. Plus les bras sont tendus, plus le levier est long et l'exercice difficile. Renforce les obliques et le transverse.</div>
+        </div>
+        <div class="video-meta">
+          <span class="meta-item">Utilise dans : <strong>Tous les programmes</strong></span>
+          <span class="meta-item">Reps : <strong>3x 10/cote</strong></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="video-card" data-id="28">
+      <div class="video-header" onclick="toggleCard(this)">
+        <input type="checkbox" onclick="event.stopPropagation(); updateProgress()">
+        <span class="video-num">28</span>
+        <span class="video-tag tag-off-pole">Off-Pole</span>
+        <span class="video-title">Planche laterale</span>
+        <span class="video-duration">30s</span>
+        <span class="video-expand">&#9660;</span>
+      </div>
+      <div class="video-details">
+        <div class="video-desc">
+          <div class="step"><span class="step-num">1.</span> Sur le cote, appui sur l'avant-bras et le pied inferieur. Corps droit, hanches levees, alignement tete-epaule-hanche-pied.</div>
+          <div class="step"><span class="step-num">2.</span> Main libre sur la hanche ou tendue vers le plafond. Tenir la position sans laisser les hanches descendre.</div>
+          <div class="step"><span class="step-num">3.</span> <strong>Cle :</strong> La hanche du dessus ne doit PAS reculer. Engager les obliques et le moyen fessier. Regression : genoux au sol.</div>
+        </div>
+        <div class="video-meta">
+          <span class="meta-item">Utilise dans : <strong>SM Sol</strong></span>
+          <span class="meta-item">Duree : <strong>3x 15-30 sec/cote</strong></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="video-card" data-id="29">
+      <div class="video-header" onclick="toggleCard(this)">
+        <input type="checkbox" onclick="event.stopPropagation(); updateProgress()">
+        <span class="video-num">29</span>
+        <span class="video-tag tag-off-pole">Off-Pole</span>
+        <span class="video-title">Planche avec tap epaule</span>
+        <span class="video-duration">30s</span>
+        <span class="video-expand">&#9660;</span>
+      </div>
+      <div class="video-details">
+        <div class="video-desc">
+          <div class="step"><span class="step-num">1.</span> Position de pompe haute (bras tendus). Corps droit et rigide.</div>
+          <div class="step"><span class="step-num">2.</span> Lever une main et toucher l'EPAULE opposee, puis reposer. Alterner les cotes.</div>
+          <div class="step"><span class="step-num">3.</span> <strong>Cle :</strong> Le corps NE BOUGE PAS — pas de rotation, pas de balancement des hanches. Ecarter les pieds pour plus de stabilite. Combine anti-rotation + gainage dynamique.</div>
+        </div>
+        <div class="video-meta">
+          <span class="meta-item">Utilise dans : <strong>SM Sol</strong></span>
+          <span class="meta-item">Reps : <strong>3x 8/cote</strong></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="video-card" data-id="30">
+      <div class="video-header" onclick="toggleCard(this)">
+        <input type="checkbox" onclick="event.stopPropagation(); updateProgress()">
+        <span class="video-num">30</span>
+        <span class="video-tag tag-off-pole">Off-Pole</span>
+        <span class="video-title">Superman hold</span>
+        <span class="video-duration">20s</span>
+        <span class="video-expand">&#9660;</span>
+      </div>
+      <div class="video-details">
+        <div class="video-desc">
+          <div class="step"><span class="step-num">1.</span> Allonge sur le ventre, bras tendus devant soi (comme Superman qui vole).</div>
+          <div class="step"><span class="step-num">2.</span> Lever simultanement les bras, la poitrine ET les jambes du sol. Serrer les fessiers et les muscles du bas du dos.</div>
+          <div class="step"><span class="step-num">3.</span> <strong>Cle :</strong> Regard vers le sol (ne pas lever la tete). Tenir la position 15 sec. Renforce les extenseurs du dos — le contrepoids du hollow body hold.</div>
+        </div>
+        <div class="video-meta">
+          <span class="meta-item">Utilise dans : <strong>V, V Aerien</strong></span>
+          <span class="meta-item">Duree : <strong>3x 15 sec</strong></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- FLECHISSEURS -->
+    <div class="session-header common">
+      <h2>Flechisseurs de hanches</h2>
+      <span class="count">8 videos</span>
+    </div>
+
+    <div class="video-card" data-id="31">
+      <div class="video-header" onclick="toggleCard(this)">
+        <input type="checkbox" onclick="event.stopPropagation(); updateProgress()">
+        <span class="video-num">31</span>
+        <span class="video-tag tag-off-pole">Off-Pole</span>
+        <span class="video-title">Hanging knee raises</span>
+        <span class="video-duration">30s</span>
+        <span class="video-expand">&#9660;</span>
+      </div>
+      <div class="video-details">
+        <div class="video-desc">
+          <div class="step"><span class="step-num">1.</span> Suspendre a la barre de traction, bras tendus, epaules engagees (depression scapulaire). Corps droit, pieds decollent du sol.</div>
+          <div class="step"><span class="step-num">2.</span> Monter les GENOUX vers la poitrine en roulant le bassin vers le haut. Les genoux depassent la ligne horizontale.</div>
+          <div class="step"><span class="step-num">3.</span> <strong>Cle :</strong> NE PAS balancer. Si le corps balance, le mouvement est trop explosif. Descente LENTE (3 sec). C'est la regression du leg raise.</div>
+        </div>
+        <div class="video-meta">
+          <span class="meta-item">Utilise dans : <strong>V, SM Sol</strong></span>
+          <span class="meta-item">Reps : <strong>3-4x 8-12</strong></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="video-card" data-id="32">
+      <div class="video-header" onclick="toggleCard(this)">
+        <input type="checkbox" onclick="event.stopPropagation(); updateProgress()">
+        <span class="video-num">32</span>
+        <span class="video-tag tag-off-pole">Off-Pole</span>
+        <span class="video-title">Hanging leg raises (jambes tendues)</span>
+        <span class="video-duration">30s</span>
+        <span class="video-expand">&#9660;</span>
+      </div>
+      <div class="video-details">
+        <div class="video-desc">
+          <div class="step"><span class="step-num">1.</span> Suspendre a la barre, bras tendus, epaules engagees. Corps droit.</div>
+          <div class="step"><span class="step-num">2.</span> Lever les jambes TENDUES jusqu'a l'horizontale (ou plus haut). Le bassin doit rouler vers le haut a la fin du mouvement.</div>
+          <div class="step"><span class="step-num">3.</span> <strong>Cle :</strong> Pointes de pieds. Descente LENTE et controlee (3-4 sec). Si les jambes ne montent pas a l'horizontale, continuer avec les knee raises. Reproduit exactement le mouvement de monter les jambes en inversion.</div>
+        </div>
+        <div class="video-meta">
+          <span class="meta-item">Utilise dans : <strong>V, V Aerien, SM Aerien</strong></span>
+          <span class="meta-item">Reps : <strong>3-4x 8-12</strong></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="video-card" data-id="33">
+      <div class="video-header" onclick="toggleCard(this)">
+        <input type="checkbox" onclick="event.stopPropagation(); updateProgress()">
+        <span class="video-num">33</span>
+        <span class="video-tag tag-off-pole">Off-Pole</span>
+        <span class="video-title">Toes to bar</span>
+        <span class="video-duration">30s</span>
+        <span class="video-expand">&#9660;</span>
+      </div>
+      <div class="video-details">
+        <div class="video-desc">
+          <div class="step"><span class="step-num">1.</span> Suspendre a la barre, bras tendus. Monter les pieds jusqu'a TOUCHER la barre avec les orteils.</div>
+          <div class="step"><span class="step-num">2.</span> Ca exige une compression complete (flexion de hanche > 90 deg) + force de core maximale + engagement des lats pour stabiliser.</div>
+          <div class="step"><span class="step-num">3.</span> <strong>Cle :</strong> Progression ultime du leg raise. Ne pas kicker — mouvement CONTROLE. Descente lente. Transfert direct a l'inversion aerienne.</div>
+        </div>
+        <div class="video-meta">
+          <span class="meta-item">Utilise dans : <strong>V Aerien, SM Aerien</strong></span>
+          <span class="meta-item">Reps : <strong>3x 5-8</strong></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="video-card" data-id="34">
+      <div class="video-header" onclick="toggleCard(this)">
+        <input type="checkbox" onclick="event.stopPropagation(); updateProgress()">
+        <span class="video-num">34</span>
+        <span class="video-tag tag-off-pole">Off-Pole</span>
+        <span class="video-title">V-ups</span>
+        <span class="video-duration">30s</span>
+        <span class="video-expand">&#9660;</span>
+      </div>
+      <div class="video-details">
+        <div class="video-desc">
+          <div class="step"><span class="step-num">1.</span> Allonge sur le dos, bras tendus au-dessus de la tete, jambes tendues au sol.</div>
+          <div class="step"><span class="step-num">2.</span> Monter SIMULTANEMENT le buste et les jambes pour toucher les pieds avec les mains au sommet. Le corps forme un V.</div>
+          <div class="step"><span class="step-num">3.</span> <strong>Cle :</strong> Mouvement explosif a la montee, controle a la descente. Les jambes et le buste montent EN MEME TEMPS. Regression : toucher les tibias au lieu des pieds.</div>
+        </div>
+        <div class="video-meta">
+          <span class="meta-item">Utilise dans : <strong>Tous les programmes</strong></span>
+          <span class="meta-item">Reps : <strong>3x 10-12</strong></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="video-card" data-id="35">
+      <div class="video-header" onclick="toggleCard(this)">
+        <input type="checkbox" onclick="event.stopPropagation(); updateProgress()">
+        <span class="video-num">35</span>
+        <span class="video-tag tag-off-pole">Off-Pole</span>
+        <span class="video-title">Pike compression assis</span>
+        <span class="video-duration">30s</span>
+        <span class="video-expand">&#9660;</span>
+      </div>
+      <div class="video-details">
+        <div class="video-desc">
+          <div class="step"><span class="step-num">1.</span> Assis au sol, jambes tendues devant soi. Mains posees au sol a cote des cuisses (ou legerement devant).</div>
+          <div class="step"><span class="step-num">2.</span> En poussant dans les mains, LEVER les pieds du sol en compressant (flechisseurs de hanches travaillent a fond). Garder les jambes tendues.</div>
+          <div class="step"><span class="step-num">3.</span> <strong>Cle :</strong> C'est TRES dur — meme lever les pieds de 1 cm compte. Tenir 5 sec par rep. Cible les flechisseurs de hanches en position courte — transfert direct a l'inversion aerienne.</div>
+        </div>
+        <div class="video-meta">
+          <span class="meta-item">Utilise dans : <strong>V, V Aerien, SM Aerien</strong></span>
+          <span class="meta-item">Reps : <strong>3x 5 (tenue 5 sec)</strong></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="video-card" data-id="36">
+      <div class="video-header" onclick="toggleCard(this)">
+        <input type="checkbox" onclick="event.stopPropagation(); updateProgress()">
+        <span class="video-num">36</span>
+        <span class="video-tag tag-off-pole">Off-Pole</span>
+        <span class="video-title">Kick simule au sol (elastique)</span>
+        <span class="video-duration">30s</span>
+        <span class="video-expand">&#9660;</span>
+      </div>
+      <div class="video-details">
+        <div class="video-desc">
+          <div class="step"><span class="step-num">1.</span> Elastique attache a la cheville. Debout, dos contre un mur (ou la barre). Pied arriere en retrait.</div>
+          <div class="step"><span class="step-num">2.</span> Kicker la jambe vers le plafond contre la resistance de l'elastique, comme pour initier un shoulder mount.</div>
+          <div class="step"><span class="step-num">3.</span> <strong>Cle :</strong> Reproduit le geste specifique du kick du SM au sol. Renforce les flechisseurs de hanches dans l'angle exact du mouvement.</div>
+        </div>
+        <div class="video-meta">
+          <span class="meta-item">Utilise dans : <strong>SM Sol</strong></span>
+          <span class="meta-item">Reps : <strong>3x 8/cote</strong></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="video-card" data-id="37">
+      <div class="video-header" onclick="toggleCard(this)">
+        <input type="checkbox" onclick="event.stopPropagation(); updateProgress()">
+        <span class="video-num">37</span>
+        <span class="video-tag tag-off-pole">Off-Pole</span>
+        <span class="video-title">Psoas march (elastique au pied)</span>
+        <span class="video-duration">30s</span>
+        <span class="video-expand">&#9660;</span>
+      </div>
+      <div class="video-details">
+        <div class="video-desc">
+          <div class="step"><span class="step-num">1.</span> Allonge sur le dos, elastique autour d'un pied, l'autre extremite fixee en bas (pied de table, etc.).</div>
+          <div class="step"><span class="step-num">2.</span> Lever le genou vers la poitrine contre la resistance de l'elastique, comme une marche exageree.</div>
+          <div class="step"><span class="step-num">3.</span> <strong>Cle :</strong> Garder le bas du dos COLLE au sol. Mouvement lent et controle. Cible specifiquement le psoas, muscle profond essentiel pour lever les jambes en inversion.</div>
+        </div>
+        <div class="video-meta">
+          <span class="meta-item">Utilise dans : <strong>SM Aerien</strong></span>
+          <span class="meta-item">Reps : <strong>3x 10/cote</strong></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="video-card" data-id="38">
+      <div class="video-header" onclick="toggleCard(this)">
+        <input type="checkbox" onclick="event.stopPropagation(); updateProgress()">
+        <span class="video-num">38</span>
+        <span class="video-tag tag-off-pole">Off-Pole</span>
+        <span class="video-title">Pancake stretch actif</span>
+        <span class="video-duration">30s</span>
+        <span class="video-expand">&#9660;</span>
+      </div>
+      <div class="video-details">
+        <div class="video-desc">
+          <div class="step"><span class="step-num">1.</span> Assis au sol, jambes ecartees en straddle. Dos droit, poitrine ouverte.</div>
+          <div class="step"><span class="step-num">2.</span> Avancer le buste vers le sol en gardant le dos DROIT (ne pas arrondir). Engager activement les flechisseurs de hanches pour tirer le torse vers l'avant.</div>
+          <div class="step"><span class="step-num">3.</span> <strong>Cle :</strong> C'est un stretch ACTIF — les muscles travaillent pour gagner de l'amplitude, pas juste la gravite. Tenir 30 sec, relacher, recommencer plus loin.</div>
+        </div>
+        <div class="video-meta">
+          <span class="meta-item">Utilise dans : <strong>SM Aerien</strong></span>
+          <span class="meta-item">Duree : <strong>3x 30 sec</strong></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- MOBILITE -->
+    <div class="session-header common">
+      <h2>Mobilite</h2>
+      <span class="count">2 videos</span>
+    </div>
+
+    <div class="video-card" data-id="39">
+      <div class="video-header" onclick="toggleCard(this)">
+        <input type="checkbox" onclick="event.stopPropagation(); updateProgress()">
+        <span class="video-num">39</span>
+        <span class="video-tag tag-off-pole">Off-Pole</span>
+        <span class="video-title">Cat-cow + thread the needle</span>
+        <span class="video-duration">30s</span>
+        <span class="video-expand">&#9660;</span>
+      </div>
+      <div class="video-details">
+        <div class="video-desc">
+          <div class="step"><span class="step-num">1.</span> <strong>Cat-cow :</strong> A quatre pattes. Inspirer en creusant le dos (cow), expirer en arrondissant le dos (cat). 8 repetitions lentes.</div>
+          <div class="step"><span class="step-num">2.</span> <strong>Thread the needle :</strong> A quatre pattes. Passer un bras SOUS le torse vers le cote oppose, epaule au sol, tourner le torse. Tenir 5 sec, revenir, changer de cote.</div>
+          <div class="step"><span class="step-num">3.</span> <strong>Cle :</strong> Mobilise la colonne thoracique (haut du dos). Essentiel pour l'amplitude des epaules au shoulder mount.</div>
+        </div>
+        <div class="video-meta">
+          <span class="meta-item">Utilise dans : <strong>SM Sol</strong></span>
+          <span class="meta-item">Reps : <strong>2x 8</strong></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="video-card" data-id="40">
+      <div class="video-header" onclick="toggleCard(this)">
+        <input type="checkbox" onclick="event.stopPropagation(); updateProgress()">
+        <span class="video-num">40</span>
+        <span class="video-tag tag-off-pole">Off-Pole</span>
+        <span class="video-title">Psoas stretch actif</span>
+        <span class="video-duration">20s</span>
+        <span class="video-expand">&#9660;</span>
+      </div>
+      <div class="video-details">
+        <div class="video-desc">
+          <div class="step"><span class="step-num">1.</span> Position de fente basse, genou arriere au sol. Le genou avant au-dessus de la cheville.</div>
+          <div class="step"><span class="step-num">2.</span> Pousser les hanches vers l'AVANT tout en contractant le fessier de la jambe arriere. Lever le bras du meme cote que le genou arriere vers le plafond.</div>
+          <div class="step"><span class="step-num">3.</span> <strong>Cle :</strong> La contraction du fessier est essentielle — elle etire le psoas par inhibition reciproque. Tenir 30 sec/cote. Contre la raideur de hanches liee a la position assise.</div>
+        </div>
+        <div class="video-meta">
+          <span class="meta-item">Utilise dans : <strong>SM Sol</strong></span>
+          <span class="meta-item">Duree : <strong>2x 30 sec/cote</strong></span>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ==================== V (INVERSION) ==================== -->
+  <section class="section" id="section-v">
+
+    <div class="session-header v">
+      <h2>Programme V — On-Pole : Progressions inversion</h2>
+      <span class="count">7 videos</span>
+    </div>
+
+    <div class="video-card" data-id="41"><div class="video-header" onclick="toggleCard(this)"><input type="checkbox" onclick="event.stopPropagation(); updateProgress()"><span class="video-num">41</span><span class="video-tag tag-on-pole">On-Pole</span><span class="video-title">Dead hang sur la barre (pole)</span><span class="video-duration">30s</span><span class="video-expand">&#9660;</span></div><div class="video-details"><div class="video-desc"><div class="step"><span class="step-num">1.</span> Debout face a la barre, attraper la barre des deux mains (une au-dessus de l'autre), pieds au sol.</div><div class="step"><span class="step-num">2.</span> Engager les epaules vers le BAS (depression scapulaire) et les lats SANS monter les pieds. Sentir le poids du corps sur la barre.</div><div class="step"><span class="step-num">3.</span> <strong>Cle :</strong> C'est le premier contact. Apprend a engager les lats et les epaules avant toute tentative d'inversion. Tenir 10 sec, 3 series.</div></div></div></div>
+
+    <div class="video-card" data-id="42"><div class="video-header" onclick="toggleCard(this)"><input type="checkbox" onclick="event.stopPropagation(); updateProgress()"><span class="video-num">42</span><span class="video-tag tag-on-pole">On-Pole</span><span class="video-title">Tuck hang</span><span class="video-duration">30s</span><span class="video-expand">&#9660;</span></div><div class="video-details"><div class="video-desc"><div class="step"><span class="step-num">1.</span> Mains sur la barre. Engager les lats et le core, puis monter les GENOUX vers la poitrine jusqu'a ce que les pieds decollent du sol.</div><div class="step"><span class="step-num">2.</span> Tenir la position en boule (tuck) suspendu a la barre. Le corps est compact, genoux serres contre la poitrine.</div><div class="step"><span class="step-num">3.</span> <strong>Cle :</strong> Ne pas sauter pour monter les genoux — TIRER avec le core. C'est le building block de l'inversion. Si le grip lache, renforcer avec les dead hangs.</div></div></div></div>
+
+    <div class="video-card" data-id="43"><div class="video-header" onclick="toggleCard(this)"><input type="checkbox" onclick="event.stopPropagation(); updateProgress()"><span class="video-num">43</span><span class="video-tag tag-on-pole">On-Pole</span><span class="video-title">Inversion assistee (spotter)</span><span class="video-duration">45s</span><span class="video-expand">&#9660;</span></div><div class="video-details"><div class="video-desc"><div class="step"><span class="step-num">1.</span> Mains sur la barre. Le spotter se place derriere et supporte les hanches pendant la montee.</div><div class="step"><span class="step-num">2.</span> Engager core + lats, monter les genoux en tuck, puis depiler les jambes vers le plafond avec l'aide du spotter.</div><div class="step"><span class="step-num">3.</span> <strong>Cle :</strong> Le spotter aide mais NE FAIT PAS le travail. L'eleve doit sentir l'engagement musculaire. Tenir 3-5 sec en haut, descente controlee. Semaines 1-2.</div></div></div></div>
+
+    <div class="video-card" data-id="44"><div class="video-header" onclick="toggleCard(this)"><input type="checkbox" onclick="event.stopPropagation(); updateProgress()"><span class="video-num">44</span><span class="video-tag tag-on-pole">On-Pole</span><span class="video-title">Inversion avec kick reduit</span><span class="video-duration">45s</span><span class="video-expand">&#9660;</span></div><div class="video-details"><div class="video-desc"><div class="step"><span class="step-num">1.</span> Mains sur la barre, un pied legerement en retrait. Donner un PETIT kick avec la jambe arriere tout en tirant avec les lats.</div><div class="step"><span class="step-num">2.</span> Le kick est minimal — juste assez pour aider, c'est le CORE et les LATS qui font le gros du travail.</div><div class="step"><span class="step-num">3.</span> <strong>Cle :</strong> Chaque semaine, reduire le kick. Le but est de s'en passer completement. Tenir 5-8 sec en haut. Semaines 3-4.</div></div></div></div>
+
+    <div class="video-card" data-id="45"><div class="video-header" onclick="toggleCard(this)"><input type="checkbox" onclick="event.stopPropagation(); updateProgress()"><span class="video-num">45</span><span class="video-tag tag-on-pole">On-Pole</span><span class="video-title">Inversion tuck to extend</span><span class="video-duration">45s</span><span class="video-expand">&#9660;</span></div><div class="video-details"><div class="video-desc"><div class="step"><span class="step-num">1.</span> Mains sur la barre. Monter les genoux a la poitrine (tuck) en utilisant le core — SANS elan ni kick.</div><div class="step"><span class="step-num">2.</span> Une fois en position tuck (bassin a hauteur de la barre), DEPILER lentement les jambes vers le plafond.</div><div class="step"><span class="step-num">3.</span> <strong>Cle :</strong> C'est l'inversion propre et finale. Deux temps distincts : 1) tuck (core) → 2) extend (flechisseurs). Mouvement lent. Tenir 8-10 sec en haut. Semaines 5-6.</div></div></div></div>
+
+    <div class="video-card" data-id="46"><div class="video-header" onclick="toggleCard(this)"><input type="checkbox" onclick="event.stopPropagation(); updateProgress()"><span class="video-num">46</span><span class="video-tag tag-on-pole">On-Pole</span><span class="video-title">Negative lente (inversion)</span><span class="video-duration">30s</span><span class="video-expand">&#9660;</span></div><div class="video-details"><div class="video-desc"><div class="step"><span class="step-num">1.</span> Monter en inversion (par la methode disponible). En position haute, preparer la descente.</div><div class="step"><span class="step-num">2.</span> Descendre le plus LENTEMENT possible — replier les jambes en tuck, puis derouler le corps vers le sol centimetre par centimetre.</div><div class="step"><span class="step-num">3.</span> <strong>Cle :</strong> La negative est le meilleur constructeur de force. Objectif : 3 sec (S1) → 10 sec (S6). Faire a CHAQUE seance, c'est non-negociable.</div></div></div></div>
+
+    <div class="video-card" data-id="47"><div class="video-header" onclick="toggleCard(this)"><input type="checkbox" onclick="event.stopPropagation(); updateProgress()"><span class="video-num">47</span><span class="video-tag tag-on-pole">On-Pole</span><span class="video-title">Invert hold (isometrique)</span><span class="video-duration">30s</span><span class="video-expand">&#9660;</span></div><div class="video-details"><div class="video-desc"><div class="step"><span class="step-num">1.</span> Monter en inversion et TENIR la position. Corps vertical, tete en bas, jambes vers le plafond.</div><div class="step"><span class="step-num">2.</span> Engager tout : grip, lats, epaules, core. Ne pas simplement pendre — etre ACTIF dans la tenue.</div><div class="step"><span class="step-num">3.</span> <strong>Cle :</strong> Objectif : 5 sec (S1) → 15 sec (S6). Respirer normalement. Si le grip commence a lacher, descendre IMMEDIATEMENT de maniere controlee.</div></div></div></div>
+
+    <div class="session-header v">
+      <h2>Programme V — Erreurs courantes</h2>
+      <span class="count">5 videos</span>
+    </div>
+
+    <div class="video-card" data-id="48"><div class="video-header" onclick="toggleCard(this)"><input type="checkbox" onclick="event.stopPropagation(); updateProgress()"><span class="video-num">48</span><span class="video-tag tag-erreur">Erreur</span><span class="video-title">Kick violent</span><span class="video-duration">20s</span><span class="video-expand">&#9660;</span></div><div class="video-details"><div class="video-desc"><strong>Montrer :</strong> D'abord la mauvaise execution (kick excessif, balancement), puis la bonne (montee controlee par le core). Expliquer que le kick est une bequille temporaire, pas l'objectif.</div></div></div>
+
+    <div class="video-card" data-id="49"><div class="video-header" onclick="toggleCard(this)"><input type="checkbox" onclick="event.stopPropagation(); updateProgress()"><span class="video-num">49</span><span class="video-tag tag-erreur">Erreur</span><span class="video-title">Bras tendus passivement / epaules effondrees</span><span class="video-duration">20s</span><span class="video-expand">&#9660;</span></div><div class="video-details"><div class="video-desc"><strong>Montrer :</strong> D'abord epaules relachees (pendre passivement, stress sur les articulations), puis depression scapulaire active (epaules loin des oreilles, lats engages).</div></div></div>
+
+    <div class="video-card" data-id="50"><div class="video-header" onclick="toggleCard(this)"><input type="checkbox" onclick="event.stopPropagation(); updateProgress()"><span class="video-num">50</span><span class="video-tag tag-erreur">Erreur</span><span class="video-title">Monter les jambes sans le bassin</span><span class="video-duration">20s</span><span class="video-expand">&#9660;</span></div><div class="video-details"><div class="video-desc"><strong>Montrer :</strong> Les jambes montent mais le bassin reste bas (angle en L), puis la bonne version ou le BASSIN monte a la barre et les jambes suivent. Cue : "Amenez le bassin a la barre".</div></div></div>
+
+    <div class="video-card" data-id="51"><div class="video-header" onclick="toggleCard(this)"><input type="checkbox" onclick="event.stopPropagation(); updateProgress()"><span class="video-num">51</span><span class="video-tag tag-erreur">Erreur</span><span class="video-title">Dos cambre en montant</span><span class="video-duration">20s</span><span class="video-expand">&#9660;</span></div><div class="video-details"><div class="video-desc"><strong>Montrer :</strong> Le dos se cambre pendant la montee (core pas engage), puis la bonne version avec core engage (nombril vers la colonne AVANT de monter).</div></div></div>
+
+    <div class="video-card" data-id="52"><div class="video-header" onclick="toggleCard(this)"><input type="checkbox" onclick="event.stopPropagation(); updateProgress()"><span class="video-num">52</span><span class="video-tag tag-erreur">Erreur</span><span class="video-title">Descente en chute libre</span><span class="video-duration">20s</span><span class="video-expand">&#9660;</span></div><div class="video-details"><div class="video-desc"><strong>Montrer :</strong> Descente non controlee (tomber d'un coup), puis negative lente et maitrisee. La descente controlee construit plus de force que la montee.</div></div></div>
+  </section>
+
+  <!-- ==================== V AERIEN ==================== -->
+  <section class="section" id="section-va">
+
+    <div class="session-header va">
+      <h2>Programme V Aerien — On-Pole : Regressions</h2>
+      <span class="count">9 videos</span>
+    </div>
+
+    <div class="video-card" data-id="53"><div class="video-header" onclick="toggleCard(this)"><input type="checkbox" onclick="event.stopPropagation(); updateProgress()"><span class="video-num">53</span><span class="video-tag tag-on-pole">On-Pole</span><span class="video-title">Dead hang actif (pole)</span><span class="video-duration">30s</span><span class="video-expand">&#9660;</span></div><div class="video-details"><div class="video-desc"><div class="step"><span class="step-num">1.</span> Agripper la barre des deux mains, pieds au sol. Engager les lats et les epaules en tirant legerement — comme si on voulait plier la barre.</div><div class="step"><span class="step-num">2.</span> Maintenir l'engagement SANS monter. Les pieds restent au sol. Sentir la tension dans les lats et les epaules.</div><div class="step"><span class="step-num">3.</span> <strong>Cle :</strong> C'est l'activation neuromusculaire — apprendre au corps quels muscles engager AVANT de monter. Tenir 10 sec, 3 series.</div></div></div></div>
+
+    <div class="video-card" data-id="54"><div class="video-header" onclick="toggleCard(this)"><input type="checkbox" onclick="event.stopPropagation(); updateProgress()"><span class="video-num">54</span><span class="video-tag tag-on-pole">On-Pole</span><span class="video-title">Tirage partiel</span><span class="video-duration">30s</span><span class="video-expand">&#9660;</span></div><div class="video-details"><div class="video-desc"><div class="step"><span class="step-num">1.</span> Mains sur la barre. Engager lats + core et decoller les pieds de 5 a 10 cm du sol uniquement.</div><div class="step"><span class="step-num">2.</span> Tenir la position 2-3 sec puis redescendre LENTEMENT (3 sec de descente).</div><div class="step"><span class="step-num">3.</span> <strong>Cle :</strong> Pas besoin de monter haut — l'objectif est de sentir le tirage des lats. Si les pieds ne decollent pas, continuer les dead hangs actifs.</div></div></div></div>
+
+    <div class="video-card" data-id="55"><div class="video-header" onclick="toggleCard(this)"><input type="checkbox" onclick="event.stopPropagation(); updateProgress()"><span class="video-num">55</span><span class="video-tag tag-on-pole">On-Pole</span><span class="video-title">Inversion kick-up minimal</span><span class="video-duration">45s</span><span class="video-expand">&#9660;</span></div><div class="video-details"><div class="video-desc"><div class="step"><span class="step-num">1.</span> Mains sur la barre. Monter en inversion avec le MINIMUM d'elan possible — le kick est une aide, pas le moteur.</div><div class="step"><span class="step-num">2.</span> Focus : tirer avec les LATS, le kick ne fait que 20% du travail. Descente lente 5 sec.</div><div class="step"><span class="step-num">3.</span> <strong>Cle :</strong> Semaines 1-2 du programme. Chaque session, essayer de reduire l'elan. 4 x 3 reps.</div></div></div></div>
+
+    <div class="video-card" data-id="56"><div class="video-header" onclick="toggleCard(this)"><input type="checkbox" onclick="event.stopPropagation(); updateProgress()"><span class="video-num">56</span><span class="video-tag tag-on-pole">On-Pole</span><span class="video-title">Inversion pied sureleve (banc haut)</span><span class="video-duration">45s</span><span class="video-expand">&#9660;</span></div><div class="video-details"><div class="video-desc"><div class="step"><span class="step-num">1.</span> Placer un banc ou step DERRIERE soi. Poser un pied sur le banc (position surelevee, plus proche de l'inversion).</div><div class="step"><span class="step-num">2.</span> Depuis cette position surelevee, monter en inversion en FORCE — le pied pousse legerement mais les lats et le core font l'essentiel.</div><div class="step"><span class="step-num">3.</span> <strong>Cle :</strong> Le banc reduit la distance a parcourir. Semaines 3-4. 4 x 2 reps. Progression : baisser la hauteur du banc chaque semaine.</div></div></div></div>
+
+    <div class="video-card" data-id="57"><div class="video-header" onclick="toggleCard(this)"><input type="checkbox" onclick="event.stopPropagation(); updateProgress()"><span class="video-num">57</span><span class="video-tag tag-on-pole">On-Pole</span><span class="video-title">Inversion pied sureleve (banc bas)</span><span class="video-duration">30s</span><span class="video-expand">&#9660;</span></div><div class="video-details"><div class="video-desc"><div class="step"><span class="step-num">1.</span> Meme exercice que #56 mais avec un banc plus BAS — le pied est presque au sol.</div><div class="step"><span class="step-num">2.</span> L'assistance du banc est minimale, les lats et le core font 80-90% du travail.</div><div class="step"><span class="step-num">3.</span> <strong>Cle :</strong> Derniere etape avant l'elastique. Si ca passe proprement, passer a l'elastique.</div></div></div></div>
+
+    <div class="video-card" data-id="58"><div class="video-header" onclick="toggleCard(this)"><input type="checkbox" onclick="event.stopPropagation(); updateProgress()"><span class="video-num">58</span><span class="video-tag tag-on-pole">On-Pole</span><span class="video-title">Inversion avec elastique (assist)</span><span class="video-duration">45s</span><span class="video-expand">&#9660;</span></div><div class="video-details"><div class="video-desc"><div class="step"><span class="step-num">1.</span> Fixer un elastique EPAIS en haut de la barre. Le passer sous les hanches ou les pieds.</div><div class="step"><span class="step-num">2.</span> Monter en inversion en FORCE PURE — l'elastique assiste le mouvement en poussant vers le haut.</div><div class="step"><span class="step-num">3.</span> <strong>Cle :</strong> Semaines 5-6. 4 x 1-2 reps. Progression : elastique de plus en plus fin chaque semaine jusqu'a s'en passer.</div></div></div></div>
+
+    <div class="video-card" data-id="59"><div class="video-header" onclick="toggleCard(this)"><input type="checkbox" onclick="event.stopPropagation(); updateProgress()"><span class="video-num">59</span><span class="video-tag tag-on-pole">On-Pole</span><span class="video-title">Inversion aerienne complete</span><span class="video-duration">45s</span><span class="video-expand">&#9660;</span></div><div class="video-details"><div class="video-desc"><div class="step"><span class="step-num">1.</span> Mains sur la barre. ZERO elan. Les pieds decollent du sol ENSEMBLE par la pure force des lats, du core et des flechisseurs.</div><div class="step"><span class="step-num">2.</span> Le corps monte lentement et de maniere controlee jusqu'a la position inversee. Pas de kick, pas de balancement.</div><div class="step"><span class="step-num">3.</span> <strong>Cle :</strong> C'est l'objectif final. Tenir 5+ sec en haut. Si ca ne passe pas, retourner aux elastiques. Filmer de profil pour verifier l'absence totale d'elan.</div></div></div></div>
+
+    <div class="video-card" data-id="60"><div class="video-header" onclick="toggleCard(this)"><input type="checkbox" onclick="event.stopPropagation(); updateProgress()"><span class="video-num">60</span><span class="video-tag tag-on-pole">On-Pole</span><span class="video-title">Negative lente (inversion aerienne)</span><span class="video-duration">30s</span><span class="video-expand">&#9660;</span></div><div class="video-details"><div class="video-desc"><div class="step"><span class="step-num">1.</span> Depuis la position inversee en haut, commencer la descente le plus LENTEMENT possible.</div><div class="step"><span class="step-num">2.</span> Controle excentrique total — le corps descend centimetre par centimetre.</div><div class="step"><span class="step-num">3.</span> <strong>Cle :</strong> Objectif : 5 sec (S1) → 10 sec (S6). La phase excentrique construit plus de force que la montee. A faire a CHAQUE seance.</div></div></div></div>
+
+    <div class="video-card" data-id="61"><div class="video-header" onclick="toggleCard(this)"><input type="checkbox" onclick="event.stopPropagation(); updateProgress()"><span class="video-num">61</span><span class="video-tag tag-on-pole">On-Pole</span><span class="video-title">Isometrique en haut</span><span class="video-duration">30s</span><span class="video-expand">&#9660;</span></div><div class="video-details"><div class="video-desc"><div class="step"><span class="step-num">1.</span> En position inversee, TENIR sans bouger. Tout est engage : grip, lats, epaules, core.</div><div class="step"><span class="step-num">2.</span> Corps aligne verticalement, stable, pas de balancement.</div><div class="step"><span class="step-num">3.</span> <strong>Cle :</strong> Objectif : 8 sec (S1) → 15 sec (S6). La tenue construit l'endurance de force et la confiance en position inversee.</div></div></div></div>
+
+    <div class="session-header va">
+      <h2>Programme V Aerien — Erreurs courantes</h2>
+      <span class="count">7 videos</span>
+    </div>
+
+    <div class="video-card" data-id="62"><div class="video-header" onclick="toggleCard(this)"><input type="checkbox" onclick="event.stopPropagation(); updateProgress()"><span class="video-num">62</span><span class="video-tag tag-erreur">Erreur</span><span class="video-title">Kicker une jambe</span><span class="video-duration">20s</span><span class="video-expand">&#9660;</span></div><div class="video-details"><div class="video-desc"><strong>Montrer :</strong> D'abord un kick avec une jambe (ce n'est plus un aerien), puis les deux pieds qui decollent ENSEMBLE en force. Cue : "Les pieds sont colles l'un a l'autre."</div></div></div>
+
+    <div class="video-card" data-id="63"><div class="video-header" onclick="toggleCard(this)"><input type="checkbox" onclick="event.stopPropagation(); updateProgress()"><span class="video-num">63</span><span class="video-tag tag-erreur">Erreur</span><span class="video-title">Tirer avec les bras seulement</span><span class="video-duration">20s</span><span class="video-expand">&#9660;</span></div><div class="video-details"><div class="video-desc"><strong>Montrer :</strong> D'abord le tirage biceps (bras qui se fatiguent vite, pas assez de force), puis le tirage LATS (imaginer tirer la barre vers le sol). Les lats sont bien plus puissants que les biceps.</div></div></div>
+
+    <div class="video-card" data-id="64"><div class="video-header" onclick="toggleCard(this)"><input type="checkbox" onclick="event.stopPropagation(); updateProgress()"><span class="video-num">64</span><span class="video-tag tag-erreur">Erreur</span><span class="video-title">Epaules effondrees</span><span class="video-duration">20s</span><span class="video-expand">&#9660;</span></div><div class="video-details"><div class="video-desc"><strong>Montrer :</strong> D'abord epaules passives (pendre sur les articulations, dangereux), puis depression scapulaire active (epaules loin des oreilles). Cue : "Eloignez les epaules des oreilles."</div></div></div>
+
+    <div class="video-card" data-id="64b"><div class="video-header" onclick="toggleCard(this)"><input type="checkbox" onclick="event.stopPropagation(); updateProgress()"><span class="video-num">64b</span><span class="video-tag tag-erreur">Erreur</span><span class="video-title">Monter les jambes avant de tirer</span><span class="video-duration">20s</span><span class="video-expand">&#9660;</span></div><div class="video-details"><div class="video-desc"><strong>Montrer :</strong> D'abord les jambes qui montent sans le bassin (desequilibre), puis la bonne sequence : tirer avec les LATS d'abord, les jambes suivent naturellement.</div></div></div>
+
+    <div class="video-card" data-id="64c"><div class="video-header" onclick="toggleCard(this)"><input type="checkbox" onclick="event.stopPropagation(); updateProgress()"><span class="video-num">64c</span><span class="video-tag tag-erreur">Erreur</span><span class="video-title">Dos cambre en montant</span><span class="video-duration">20s</span><span class="video-expand">&#9660;</span></div><div class="video-details"><div class="video-desc"><strong>Montrer :</strong> D'abord le dos qui se cambre (core pas engage, perte de force), puis la bonne version avec nombril rentre AVANT de monter. Cue : "Nombril vers la colonne."</div></div></div>
+
+    <div class="video-card" data-id="64d"><div class="video-header" onclick="toggleCard(this)"><input type="checkbox" onclick="event.stopPropagation(); updateProgress()"><span class="video-num">64d</span><span class="video-tag tag-erreur">Erreur</span><span class="video-title">Bloquer la respiration</span><span class="video-duration">20s</span><span class="video-expand">&#9660;</span></div><div class="video-details"><div class="video-desc"><strong>Montrer :</strong> D'abord l'apnee (visage rouge, perte de puissance), puis la bonne technique : EXPIRER pendant l'effort de montee. La respiration maintient la pression intra-abdominale.</div></div></div>
+
+    <div class="video-card" data-id="64e"><div class="video-header" onclick="toggleCard(this)"><input type="checkbox" onclick="event.stopPropagation(); updateProgress()"><span class="video-num">64e</span><span class="video-tag tag-erreur">Erreur</span><span class="video-title">Grip qui lache</span><span class="video-duration">20s</span><span class="video-expand">&#9660;</span></div><div class="video-details"><div class="video-desc"><strong>Montrer :</strong> Les signes de fatigue du grip (doigts qui glissent, mains moites). Expliquer : ne JAMAIS tenter une inversion aerienne quand le grip fatigue. Secher les mains, reposer, renforcer avec les dead hangs.</div></div></div>
+  </section>
+
+  <!-- ==================== SM SOL ==================== -->
+  <section class="section" id="section-sm">
+
+    <div class="session-header sm">
+      <h2>Programme SM Sol — On-Pole : Progressions</h2>
+      <span class="count">9 videos</span>
+    </div>
+
+    <div class="video-card" data-id="65"><div class="video-header" onclick="toggleCard(this)"><input type="checkbox" onclick="event.stopPropagation(); updateProgress()"><span class="video-num">65</span><span class="video-tag tag-on-pole">On-Pole</span><span class="video-title">Cup grip engagement</span><span class="video-duration">30s</span><span class="video-expand">&#9660;</span></div><div class="video-details"><div class="video-desc"><div class="step"><span class="step-num">1.</span> Dos contre la barre. Cup grip : pouces vers le bas, main interieure au niveau de l'oreille, main exterieure au-dessus de la tete.</div><div class="step"><span class="step-num">2.</span> Engager les lats en tirant la barre vers soi — comme si on voulait jeter la barre a travers la piece. NE PAS monter.</div><div class="step"><span class="step-num">3.</span> <strong>Cle :</strong> Sentir les lats (sous les aisselles) se contracter. Les coudes commencent a se rapprocher. Tenir 8 sec, 3 series.</div></div></div></div>
+
+    <div class="video-card" data-id="66"><div class="video-header" onclick="toggleCard(this)"><input type="checkbox" onclick="event.stopPropagation(); updateProgress()"><span class="video-num">66</span><span class="video-tag tag-on-pole">On-Pole</span><span class="video-title">Tirage partiel pieds au sol</span><span class="video-duration">30s</span><span class="video-expand">&#9660;</span></div><div class="video-details"><div class="video-desc"><div class="step"><span class="step-num">1.</span> Position SM (dos a la barre, cup grip). Tirer avec les lats jusqu'a decoller les TALONS du sol.</div><div class="step"><span class="step-num">2.</span> Les orteils restent au sol mais le poids est transfere sur la barre. Tenir 2 sec puis reposer.</div><div class="step"><span class="step-num">3.</span> <strong>Cle :</strong> Premiere sensation de charge sur la barre en position SM. Sentir la collarbone se coller a la barre. 3 x 6 reps.</div></div></div></div>
+
+    <div class="video-card" data-id="67"><div class="video-header" onclick="toggleCard(this)"><input type="checkbox" onclick="event.stopPropagation(); updateProgress()"><span class="video-num">67</span><span class="video-tag tag-on-pole">On-Pole</span><span class="video-title">Position de depart SM</span><span class="video-duration">30s</span><span class="video-expand">&#9660;</span></div><div class="video-details"><div class="video-desc"><div class="step"><span class="step-num">1.</span> Dos contre la barre. La colonne est d'UN COTE de la barre (pas au centre). L'epaule est COLLEE a la barre.</div><div class="step"><span class="step-num">2.</span> Pieds : pied interieur DEVANT, pied exterieur DERRIERE la barre.</div><div class="step"><span class="step-num">3.</span> <strong>Cle :</strong> Le placement est crucial. Montrer les 2 erreurs courantes : colonne au centre (inconfort) et epaule decollee (perte de levier). Video de reference pour TOUS les exercices SM.</div></div></div></div>
+
+    <div class="video-card" data-id="68"><div class="video-header" onclick="toggleCard(this)"><input type="checkbox" onclick="event.stopPropagation(); updateProgress()"><span class="video-num">68</span><span class="video-tag tag-on-pole">On-Pole</span><span class="video-title">SM avec spotter</span><span class="video-duration">45s</span><span class="video-expand">&#9660;</span></div><div class="video-details"><div class="video-desc"><div class="step"><span class="step-num">1.</span> Position SM. Le spotter se place devant et supporte les hanches pendant la montee.</div><div class="step"><span class="step-num">2.</span> Tirage lats + kick simultane. Le spotter guide les hanches vers la barre.</div><div class="step"><span class="step-num">3.</span> <strong>Cle :</strong> Semaines 1-2. Le spotter doit aider de MOINS en moins. L'eleve doit sentir le travail. 4 x 2 reps/cote.</div></div></div></div>
+
+    <div class="video-card" data-id="69"><div class="video-header" onclick="toggleCard(this)"><input type="checkbox" onclick="event.stopPropagation(); updateProgress()"><span class="video-num">69</span><span class="video-tag tag-on-pole">On-Pole</span><span class="video-title">SM kick-up libre</span><span class="video-duration">45s</span><span class="video-expand">&#9660;</span></div><div class="video-details"><div class="video-desc"><div class="step"><span class="step-num">1.</span> Position SM. SANS spotter. Kick de la jambe arriere vers le plafond + tirage des lats simultane.</div><div class="step"><span class="step-num">2.</span> Le kick et le tirage sont 50/50 — ils travaillent ENSEMBLE.</div><div class="step"><span class="step-num">3.</span> <strong>Cle :</strong> Semaines 3-4. Le regard est vers le HAUT. Crash mat obligatoire. 4 x 2 reps/cote.</div></div></div></div>
+
+    <div class="video-card" data-id="70"><div class="video-header" onclick="toggleCard(this)"><input type="checkbox" onclick="event.stopPropagation(); updateProgress()"><span class="video-num">70</span><span class="video-tag tag-on-pole">On-Pole</span><span class="video-title">SM kick reduit</span><span class="video-duration">45s</span><span class="video-expand">&#9660;</span></div><div class="video-details"><div class="video-desc"><div class="step"><span class="step-num">1.</span> Position SM. Kick MINIMAL — juste assez pour aider. Les lats font 70% du travail.</div><div class="step"><span class="step-num">2.</span> Descente lente et controlee (6-7 sec).</div><div class="step"><span class="step-num">3.</span> <strong>Cle :</strong> Semaines 5-6. Transition vers la force pure. 4 x 2 reps/cote.</div></div></div></div>
+
+    <div class="video-card" data-id="71"><div class="video-header" onclick="toggleCard(this)"><input type="checkbox" onclick="event.stopPropagation(); updateProgress()"><span class="video-num">71</span><span class="video-tag tag-on-pole">On-Pole</span><span class="video-title">SM pieds devant, kick minimal</span><span class="video-duration">45s</span><span class="video-expand">&#9660;</span></div><div class="video-details"><div class="video-desc"><div class="step"><span class="step-num">1.</span> Position SM avec les pieds DEVANT la barre (au lieu de derriere). Kick quasi inexistant.</div><div class="step"><span class="step-num">2.</span> La force des lats et du core fait 90%+ du travail. Montee lente et controlee.</div><div class="step"><span class="step-num">3.</span> <strong>Cle :</strong> Semaines 7-8. Derniere progression avant l'aerien. Tenue 10 sec en haut. 4 x 1-2 reps/cote.</div></div></div></div>
+
+    <div class="video-card" data-id="72"><div class="video-header" onclick="toggleCard(this)"><input type="checkbox" onclick="event.stopPropagation(); updateProgress()"><span class="video-num">72</span><span class="video-tag tag-on-pole">On-Pole</span><span class="video-title">Negative controlee SM</span><span class="video-duration">30s</span><span class="video-expand">&#9660;</span></div><div class="video-details"><div class="video-desc"><div class="step"><span class="step-num">1.</span> Monter en SM (par la methode disponible). En position haute, commencer a descendre le plus LENTEMENT possible.</div><div class="step"><span class="step-num">2.</span> Maintenir la collarbone collee a la barre pendant toute la descente. Les coudes restent serres.</div><div class="step"><span class="step-num">3.</span> <strong>Cle :</strong> Objectif : 3 sec (S1) → 8 sec (S8). Non-negociable a chaque seance. 3 x 2 reps/cote.</div></div></div></div>
+
+    <div class="video-card" data-id="73"><div class="video-header" onclick="toggleCard(this)"><input type="checkbox" onclick="event.stopPropagation(); updateProgress()"><span class="video-num">73</span><span class="video-tag tag-on-pole">On-Pole</span><span class="video-title">Tenue en haut SM</span><span class="video-duration">30s</span><span class="video-expand">&#9660;</span></div><div class="video-details"><div class="video-desc"><div class="step"><span class="step-num">1.</span> En position SM inversee, TENIR sans bouger. Jambe exterieure devant, jambe interieure derriere.</div><div class="step"><span class="step-num">2.</span> Collarbone collee, coudes serres, core engage. Position stable.</div><div class="step"><span class="step-num">3.</span> <strong>Cle :</strong> Objectif : 3 sec (S1) → 10 sec (S8). Respirer normalement. 3 x 3-10 sec.</div></div></div></div>
+
+    <div class="session-header sm">
+      <h2>Programme SM Sol — Erreurs courantes</h2>
+      <span class="count">7 videos</span>
+    </div>
+
+    <div class="video-card" data-id="74"><div class="video-header" onclick="toggleCard(this)"><input type="checkbox" onclick="event.stopPropagation(); updateProgress()"><span class="video-num">74</span><span class="video-tag tag-erreur">Erreur</span><span class="video-title">Tirer avec les bras seulement</span><span class="video-duration">20s</span><span class="video-expand">&#9660;</span></div><div class="video-details"><div class="video-desc"><strong>Montrer :</strong> D'abord tirage biceps (bras lachent vite), puis "jeter la barre a travers la piece" avec les LATS. Les lats sont 5x plus puissants que les biceps.</div></div></div>
+
+    <div class="video-card" data-id="75"><div class="video-header" onclick="toggleCard(this)"><input type="checkbox" onclick="event.stopPropagation(); updateProgress()"><span class="video-num">75</span><span class="video-tag tag-erreur">Erreur</span><span class="video-title">Epaule decollee de la barre</span><span class="video-duration">20s</span><span class="video-expand">&#9660;</span></div><div class="video-details"><div class="video-desc"><strong>Montrer :</strong> D'abord epaule qui s'ecarte de la barre (perte du point d'appui, perte de levier), puis collarbone COLLEE a la barre pendant tout le mouvement.</div></div></div>
+
+    <div class="video-card" data-id="76"><div class="video-header" onclick="toggleCard(this)"><input type="checkbox" onclick="event.stopPropagation(); updateProgress()"><span class="video-num">76</span><span class="video-tag tag-erreur">Erreur</span><span class="video-title">Regarder le sol</span><span class="video-duration">20s</span><span class="video-expand">&#9660;</span></div><div class="video-details"><div class="video-desc"><strong>Montrer :</strong> D'abord regard vers le sol (desequilibre, tete trop lourde), puis regard vers le HAUT (equilibre, engagement de la chaine posterieure).</div></div></div>
+
+    <div class="video-card" data-id="77"><div class="video-header" onclick="toggleCard(this)"><input type="checkbox" onclick="event.stopPropagation(); updateProgress()"><span class="video-num">77</span><span class="video-tag tag-erreur">Erreur</span><span class="video-title">Colonne au centre de la barre</span><span class="video-duration">20s</span><span class="video-expand">&#9660;</span></div><div class="video-details"><div class="video-desc"><strong>Montrer :</strong> D'abord colonne vertebrale CENTREE sur la barre (inconfort, mauvais appui), puis colonne d'UN COTE de la barre (appui sur l'epaule, levier optimal).</div></div></div>
+
+    <div class="video-card" data-id="78"><div class="video-header" onclick="toggleCard(this)"><input type="checkbox" onclick="event.stopPropagation(); updateProgress()"><span class="video-num">78</span><span class="video-tag tag-erreur">Erreur</span><span class="video-title">Coudes qui s'ecartent</span><span class="video-duration">20s</span><span class="video-expand">&#9660;</span></div><div class="video-details"><div class="video-desc"><strong>Montrer :</strong> D'abord coudes ouverts vers l'exterieur (force dispersee), puis coudes qui se RAPPROCHENT l'un de l'autre (force concentree, adduction pectoraux).</div></div></div>
+
+    <div class="video-card" data-id="79"><div class="video-header" onclick="toggleCard(this)"><input type="checkbox" onclick="event.stopPropagation(); updateProgress()"><span class="video-num">79</span><span class="video-tag tag-erreur">Erreur</span><span class="video-title">Kick sans tirage</span><span class="video-duration">20s</span><span class="video-expand">&#9660;</span></div><div class="video-details"><div class="video-desc"><strong>Montrer :</strong> D'abord kick seul sans tirage (jambe monte mais le corps ne suit pas), puis tirage + kick SIMULTANES (50/50). Les deux se produisent au MEME moment.</div></div></div>
+
+    <div class="video-card" data-id="80"><div class="video-header" onclick="toggleCard(this)"><input type="checkbox" onclick="event.stopPropagation(); updateProgress()"><span class="video-num">80</span><span class="video-tag tag-erreur">Erreur</span><span class="video-title">Grip incorrect</span><span class="video-duration">20s</span><span class="video-expand">&#9660;</span></div><div class="video-details"><div class="video-desc"><strong>Montrer :</strong> Differents grips incorrects (paumes vers le haut, mains trop ecartees), puis le bon CUP GRIP : pouces vers le BAS, main interieure a l'oreille, main exterieure au-dessus de la tete.</div></div></div>
+  </section>
+
+  <!-- ==================== SM AERIEN ==================== -->
+  <section class="section" id="section-sma">
+
+    <div class="session-header sma">
+      <h2>Programme SM Aerien — On-Pole : Regressions</h2>
+      <span class="count">10 videos</span>
+    </div>
+
+    <div class="video-card" data-id="81"><div class="video-header" onclick="toggleCard(this)"><input type="checkbox" onclick="event.stopPropagation(); updateProgress()"><span class="video-num">81</span><span class="video-tag tag-on-pole">On-Pole</span><span class="video-title">Dead hang actif cup grip</span><span class="video-duration">30s</span><span class="video-expand">&#9660;</span></div><div class="video-details"><div class="video-desc"><div class="step"><span class="step-num">1.</span> Position SM, cup grip. Engager lats et epaules sans monter — comme pour #65 mais avec intention de force maximale.</div><div class="step"><span class="step-num">2.</span> Sentir la barre se "plier" sous la force du tirage. Les coudes se rapprochent.</div><div class="step"><span class="step-num">3.</span> <strong>Cle :</strong> Engagement a 100% des lats. Tenir 10 sec, 3 series. Preparer le systeme nerveux a la charge maximale.</div></div></div></div>
+
+    <div class="video-card" data-id="82"><div class="video-header" onclick="toggleCard(this)"><input type="checkbox" onclick="event.stopPropagation(); updateProgress()"><span class="video-num">82</span><span class="video-tag tag-on-pole">On-Pole</span><span class="video-title">Tirage partiel SM</span><span class="video-duration">30s</span><span class="video-expand">&#9660;</span></div><div class="video-details"><div class="video-desc"><div class="step"><span class="step-num">1.</span> Position SM. Tirer avec les lats pour decoller les pieds de 5-10 cm, puis descente LENTE (3 sec).</div><div class="step"><span class="step-num">2.</span> Les pieds decollent ENSEMBLE — pas de kick.</div><div class="step"><span class="step-num">3.</span> <strong>Cle :</strong> Si les pieds ne decollent pas, continuer le dead hang actif. 3 x 5 reps.</div></div></div></div>
+
+    <div class="video-card" data-id="83"><div class="video-header" onclick="toggleCard(this)"><input type="checkbox" onclick="event.stopPropagation(); updateProgress()"><span class="video-num">83</span><span class="video-tag tag-on-pole">On-Pole</span><span class="video-title">SM kick-up minimal</span><span class="video-duration">45s</span><span class="video-expand">&#9660;</span></div><div class="video-details"><div class="video-desc"><div class="step"><span class="step-num">1.</span> Position SM. Kick-up avec le MINIMUM d'elan possible. Focus tirage des lats, pas la jambe.</div><div class="step"><span class="step-num">2.</span> Descente lente et controlee (5 sec).</div><div class="step"><span class="step-num">3.</span> <strong>Cle :</strong> Semaines 1-2. Chaque session, reduire l'elan. 4 x 3 reps/cote.</div></div></div></div>
+
+    <div class="video-card" data-id="84"><div class="video-header" onclick="toggleCard(this)"><input type="checkbox" onclick="event.stopPropagation(); updateProgress()"><span class="video-num">84</span><span class="video-tag tag-on-pole">On-Pole</span><span class="video-title">SM pied sureleve (banc haut)</span><span class="video-duration">45s</span><span class="video-expand">&#9660;</span></div><div class="video-details"><div class="video-desc"><div class="step"><span class="step-num">1.</span> Position SM. Pied arriere sur un banc/step HAUT. Monter en force depuis cette position surelevee.</div><div class="step"><span class="step-num">2.</span> Le pied pousse legerement mais les lats font 70% du travail.</div><div class="step"><span class="step-num">3.</span> <strong>Cle :</strong> Semaines 3-4. Progression : baisser la hauteur du banc chaque semaine. 4 x 2 reps/cote.</div></div></div></div>
+
+    <div class="video-card" data-id="85"><div class="video-header" onclick="toggleCard(this)"><input type="checkbox" onclick="event.stopPropagation(); updateProgress()"><span class="video-num">85</span><span class="video-tag tag-on-pole">On-Pole</span><span class="video-title">SM pied sureleve (banc bas)</span><span class="video-duration">30s</span><span class="video-expand">&#9660;</span></div><div class="video-details"><div class="video-desc"><div class="step"><span class="step-num">1.</span> Meme exercice que #84 mais banc plus BAS. Assistance minimale du pied.</div><div class="step"><span class="step-num">2.</span> Les lats et le core font 85-90% du travail.</div><div class="step"><span class="step-num">3.</span> <strong>Cle :</strong> Si ca passe proprement, transition vers l'elastique. 4 x 2 reps/cote.</div></div></div></div>
+
+    <div class="video-card" data-id="86"><div class="video-header" onclick="toggleCard(this)"><input type="checkbox" onclick="event.stopPropagation(); updateProgress()"><span class="video-num">86</span><span class="video-tag tag-on-pole">On-Pole</span><span class="video-title">SM assiste elastique (epais)</span><span class="video-duration">45s</span><span class="video-expand">&#9660;</span></div><div class="video-details"><div class="video-desc"><div class="step"><span class="step-num">1.</span> Elastique EPAIS fixe en haut de la barre, passe sous les hanches.</div><div class="step"><span class="step-num">2.</span> Monter en SM en force pure — l'elastique assiste en poussant les hanches vers le haut.</div><div class="step"><span class="step-num">3.</span> <strong>Cle :</strong> Semaines 5-6 (debut). L'elastique permet de sentir le mouvement complet en force. 4 x 1-2 reps/cote.</div></div></div></div>
+
+    <div class="video-card" data-id="87"><div class="video-header" onclick="toggleCard(this)"><input type="checkbox" onclick="event.stopPropagation(); updateProgress()"><span class="video-num">87</span><span class="video-tag tag-on-pole">On-Pole</span><span class="video-title">SM assiste elastique (fin)</span><span class="video-duration">30s</span><span class="video-expand">&#9660;</span></div><div class="video-details"><div class="video-desc"><div class="step"><span class="step-num">1.</span> Meme que #86 mais elastique plus FIN — assistance reduite.</div><div class="step"><span class="step-num">2.</span> 90%+ du travail est fait par les lats et le core. L'elastique est presque un "filet de securite".</div><div class="step"><span class="step-num">3.</span> <strong>Cle :</strong> Derniere etape avant le SM aerien complet. Si ca passe proprement 3x de suite, tenter sans elastique.</div></div></div></div>
+
+    <div class="video-card" data-id="88"><div class="video-header" onclick="toggleCard(this)"><input type="checkbox" onclick="event.stopPropagation(); updateProgress()"><span class="video-num">88</span><span class="video-tag tag-on-pole">On-Pole</span><span class="video-title">SM aerien complet</span><span class="video-duration">45s</span><span class="video-expand">&#9660;</span></div><div class="video-details"><div class="video-desc"><div class="step"><span class="step-num">1.</span> Position SM. ZERO elan. Force PURE. Les pieds decollent du sol ENSEMBLE.</div><div class="step"><span class="step-num">2.</span> Les lats tirent, les coudes se serrent, le core monte le bassin. Montee lente et maitrisee.</div><div class="step"><span class="step-num">3.</span> <strong>Cle :</strong> L'objectif ultime. Tenir 3+ sec en haut. Filmer de profil pour verifier l'absence totale de kick/elan. Le Graal du pole dance.</div></div></div></div>
+
+    <div class="video-card" data-id="89"><div class="video-header" onclick="toggleCard(this)"><input type="checkbox" onclick="event.stopPropagation(); updateProgress()"><span class="video-num">89</span><span class="video-tag tag-on-pole">On-Pole</span><span class="video-title">Negative lente SM aerien</span><span class="video-duration">30s</span><span class="video-expand">&#9660;</span></div><div class="video-details"><div class="video-desc"><div class="step"><span class="step-num">1.</span> Depuis la position SM haute, descendre le plus LENTEMENT possible. Collarbone collee a la barre.</div><div class="step"><span class="step-num">2.</span> Objectif : 5 sec (S1) → 10 sec (S6).</div><div class="step"><span class="step-num">3.</span> <strong>Cle :</strong> Non-negociable a chaque seance. 3 x 2 reps/cote.</div></div></div></div>
+
+    <div class="video-card" data-id="90"><div class="video-header" onclick="toggleCard(this)"><input type="checkbox" onclick="event.stopPropagation(); updateProgress()"><span class="video-num">90</span><span class="video-tag tag-on-pole">On-Pole</span><span class="video-title">Isometrique SM</span><span class="video-duration">30s</span><span class="video-expand">&#9660;</span></div><div class="video-details"><div class="video-desc"><div class="step"><span class="step-num">1.</span> En position SM inversee, TENIR sans bouger. Tout est engage.</div><div class="step"><span class="step-num">2.</span> Objectif : 8 sec (S1) → 15 sec (S6).</div><div class="step"><span class="step-num">3.</span> <strong>Cle :</strong> 3 series. La tenue isometrique construit la force et la confiance.</div></div></div></div>
+
+    <div class="session-header sma">
+      <h2>Programme SM Aerien — Erreurs courantes</h2>
+      <span class="count">7 videos</span>
+    </div>
+
+    <div class="video-card" data-id="91"><div class="video-header" onclick="toggleCard(this)"><input type="checkbox" onclick="event.stopPropagation(); updateProgress()"><span class="video-num">91</span><span class="video-tag tag-erreur">Erreur</span><span class="video-title">Tirer avec les bras seulement</span><span class="video-duration">20s</span><span class="video-expand">&#9660;</span></div><div class="video-details"><div class="video-desc"><strong>Montrer :</strong> D'abord tirage biceps (bras lachent vite), puis activation LATS ("jeter la barre a travers la piece"). Les lats ont 5x plus de puissance.</div></div></div>
+
+    <div class="video-card" data-id="92"><div class="video-header" onclick="toggleCard(this)"><input type="checkbox" onclick="event.stopPropagation(); updateProgress()"><span class="video-num">92</span><span class="video-tag tag-erreur">Erreur</span><span class="video-title">Kicker une jambe</span><span class="video-duration">20s</span><span class="video-expand">&#9660;</span></div><div class="video-details"><div class="video-desc"><strong>Montrer :</strong> D'abord kick d'une jambe (ce n'est PLUS un aerien), puis pieds qui decollent ENSEMBLE. Si on ne peut pas monter sans kick, retourner aux regressions.</div></div></div>
+
+    <div class="video-card" data-id="93"><div class="video-header" onclick="toggleCard(this)"><input type="checkbox" onclick="event.stopPropagation(); updateProgress()"><span class="video-num">93</span><span class="video-tag tag-erreur">Erreur</span><span class="video-title">Epaule decollee de la barre</span><span class="video-duration">20s</span><span class="video-expand">&#9660;</span></div><div class="video-details"><div class="video-desc"><strong>Montrer :</strong> D'abord epaule qui s'ecarte (perte de levier, dangereux), puis collarbone COLLEE a la barre pendant tout le mouvement.</div></div></div>
+
+    <div class="video-card" data-id="94"><div class="video-header" onclick="toggleCard(this)"><input type="checkbox" onclick="event.stopPropagation(); updateProgress()"><span class="video-num">94</span><span class="video-tag tag-erreur">Erreur</span><span class="video-title">Regarder ses pieds</span><span class="video-duration">20s</span><span class="video-expand">&#9660;</span></div><div class="video-details"><div class="video-desc"><strong>Montrer :</strong> D'abord regard vers les pieds (desequilibre), puis regard vers le HAUT pendant toute la montee.</div></div></div>
+
+    <div class="video-card" data-id="95"><div class="video-header" onclick="toggleCard(this)"><input type="checkbox" onclick="event.stopPropagation(); updateProgress()"><span class="video-num">95</span><span class="video-tag tag-erreur">Erreur</span><span class="video-title">Coudes qui s'ecartent</span><span class="video-duration">20s</span><span class="video-expand">&#9660;</span></div><div class="video-details"><div class="video-desc"><strong>Montrer :</strong> D'abord coudes qui partent vers l'exterieur (force dispersee), puis coudes qui se SERRENT l'un vers l'autre (adduction, force concentree).</div></div></div>
+
+    <div class="video-card" data-id="96"><div class="video-header" onclick="toggleCard(this)"><input type="checkbox" onclick="event.stopPropagation(); updateProgress()"><span class="video-num">96</span><span class="video-tag tag-erreur">Erreur</span><span class="video-title">Bloquer la respiration</span><span class="video-duration">20s</span><span class="video-expand">&#9660;</span></div><div class="video-details"><div class="video-desc"><strong>Montrer :</strong> D'abord apnee (visage rouge, perte de puissance), puis EXPIRER pendant la montee pour maintenir la pression intra-abdominale.</div></div></div>
+
+    <div class="video-card" data-id="97"><div class="video-header" onclick="toggleCard(this)"><input type="checkbox" onclick="event.stopPropagation(); updateProgress()"><span class="video-num">97</span><span class="video-tag tag-erreur">Erreur</span><span class="video-title">Monter les jambes avant de tirer</span><span class="video-duration">20s</span><span class="video-expand">&#9660;</span></div><div class="video-details"><div class="video-desc"><strong>Montrer :</strong> D'abord jambes qui montent avant le tirage (desequilibre vers l'avant), puis la bonne sequence : TIRER avec les lats d'abord, les jambes suivent.</div></div></div>
+  </section>
+
+  <!-- ==================== INTROS ==================== -->
+  <section class="section" id="section-intros">
+
+    <div class="session-header intro">
+      <h2>Intros & Anatomie</h2>
+      <span class="count">8 videos</span>
+    </div>
+
+    <div class="video-card" data-id="98"><div class="video-header" onclick="toggleCard(this)"><input type="checkbox" onclick="event.stopPropagation(); updateProgress()"><span class="video-num">98</span><span class="video-tag tag-intro">Intro</span><span class="video-title">Intro Programme V (Inversion basique)</span><span class="video-duration">1 min</span><span class="video-expand">&#9660;</span></div><div class="video-details"><div class="video-desc">Presenter le programme : objectif (maitriser l'inversion basique en 6 semaines), prerequis, structure (3 jours/semaine). Montrer le resultat final (inversion propre tuck to extend). Encourager : "C'est la porte d'entree vers TOUT en pole dance."</div></div></div>
+
+    <div class="video-card" data-id="99"><div class="video-header" onclick="toggleCard(this)"><input type="checkbox" onclick="event.stopPropagation(); updateProgress()"><span class="video-num">99</span><span class="video-tag tag-intro">Intro</span><span class="video-title">Intro Programme V Aerien (Force pure)</span><span class="video-duration">1 min</span><span class="video-expand">&#9660;</span></div><div class="video-details"><div class="video-desc">Presenter : objectif (inversion sans elan en 6 semaines), prerequis (V maitrise), difference avec le V basique (zero kick, force pure). Montrer le resultat final. "Quand vous maitriserez ca, le shoulder mount aerien sera a portee."</div></div></div>
+
+    <div class="video-card" data-id="100"><div class="video-header" onclick="toggleCard(this)"><input type="checkbox" onclick="event.stopPropagation(); updateProgress()"><span class="video-num">100</span><span class="video-tag tag-intro">Intro</span><span class="video-title">Intro Programme SM Sol (Kick-up)</span><span class="video-duration">1 min</span><span class="video-expand">&#9660;</span></div><div class="video-details"><div class="video-desc">Presenter : objectif (shoulder mount avec kick-up propre en 8 semaines), prerequis, cup grip, difference avec l'inversion classique. Montrer le resultat final. "Le shoulder mount ouvre la porte a des centaines de figures."</div></div></div>
+
+    <div class="video-card" data-id="101"><div class="video-header" onclick="toggleCard(this)"><input type="checkbox" onclick="event.stopPropagation(); updateProgress()"><span class="video-num">101</span><span class="video-tag tag-intro">Intro</span><span class="video-title">Intro Programme SM Aerien (Force pure)</span><span class="video-duration">1 min</span><span class="video-expand">&#9660;</span></div><div class="video-details"><div class="video-desc">Presenter : objectif (shoulder mount en force pure en 6 semaines), prerequis (SM sol maitrise), la finalite ("le Graal du pole dance"). Montrer le resultat final.</div></div></div>
+
+    <div class="video-card" data-id="102"><div class="video-header" onclick="toggleCard(this)"><input type="checkbox" onclick="event.stopPropagation(); updateProgress()"><span class="video-num">102</span><span class="video-tag tag-intro">Intro</span><span class="video-title">Anatomie V</span><span class="video-duration">2 min</span><span class="video-expand">&#9660;</span></div><div class="video-details"><div class="video-desc">Demo sur barre + overlay muscles en post-prod. Montrer : grip (avant-bras), lats (tirage), core (monter le bassin), flechisseurs de hanches (monter les jambes). Expliquer le cue : "Amenez le bassin a la barre."</div></div></div>
+
+    <div class="video-card" data-id="103"><div class="video-header" onclick="toggleCard(this)"><input type="checkbox" onclick="event.stopPropagation(); updateProgress()"><span class="video-num">103</span><span class="video-tag tag-intro">Intro</span><span class="video-title">Anatomie V Aerien</span><span class="video-duration">2 min</span><span class="video-expand">&#9660;</span></div><div class="video-details"><div class="video-desc">Demo sur barre + overlay muscles. Memes muscles que le V mais avec intensite maximale. Insister sur le role des LATS comme moteur principal. Cue : "Tirez la barre vers le sol."</div></div></div>
+
+    <div class="video-card" data-id="104"><div class="video-header" onclick="toggleCard(this)"><input type="checkbox" onclick="event.stopPropagation(); updateProgress()"><span class="video-num">104</span><span class="video-tag tag-intro">Intro</span><span class="video-title">Anatomie SM (Sol + Aerien)</span><span class="video-duration">2 min</span><span class="video-expand">&#9660;</span></div><div class="video-details"><div class="video-desc">Demo sur barre + overlay muscles. Montrer : lats (moteur principal), epaules (stabilisation), biceps + pectoraux (flexion + adduction), core. Expliquer le cup grip et le cue : "Jeter la barre a travers la piece."</div></div></div>
+
+    <div class="video-card" data-id="105"><div class="video-header" onclick="toggleCard(this)"><input type="checkbox" onclick="event.stopPropagation(); updateProgress()"><span class="video-num">105</span><span class="video-tag tag-intro">Intro</span><span class="video-title">Securite + outro (commun)</span><span class="video-duration">1 min</span><span class="video-expand">&#9660;</span></div><div class="video-details"><div class="video-desc">Signaux d'alerte (douleur epaule, engourdissement, claquement). Regles : crash mat toujours, echauffement obligatoire, max 2 sessions on-pole/semaine, rotation externe a chaque seance, pole statique pour apprendre. "La regularite bat l'intensite."</div></div></div>
+  </section>
+
+</div>
+
+<script>
+  // Tab switching
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('section-' + tab.dataset.tab).classList.add('active');
+    });
+  });
+
+  // Card toggle
+  function toggleCard(header) {
+    header.closest('.video-card').classList.toggle('open');
+  }
+
+  // Inject Vimeo ID fields into every video card
+  function injectVimeoFields() {
+    document.querySelectorAll('.video-card').forEach(card => {
+      const details = card.querySelector('.video-details');
+      if (!details || details.querySelector('.vimeo-field')) return;
+
+      const id = card.dataset.id;
+      const field = document.createElement('div');
+      field.className = 'vimeo-field';
+      field.innerHTML = `
+        <label><span class="vimeo-status" id="vs-${id}"></span> Vimeo ID</label>
+        <input type="text" id="vimeo-${id}" placeholder="ex: 987654321" oninput="saveVimeoId('${id}', this.value)">
+        <a class="vimeo-link" id="vl-${id}" href="#" target="_blank">Voir</a>
+      `;
+      details.insertBefore(field, details.firstChild);
+    });
+  }
+
+  // Save Vimeo ID
+  function saveVimeoId(id, value) {
+    const vimeoData = JSON.parse(localStorage.getItem('vimeo-ids') || '{}');
+    value = value.trim();
+    if (value) {
+      vimeoData[id] = value;
+    } else {
+      delete vimeoData[id];
+    }
+    localStorage.setItem('vimeo-ids', JSON.stringify(vimeoData));
+    updateVimeoStatus(id, value);
+    updateVimeoCount();
+  }
+
+  // Update visual status of a Vimeo field
+  function updateVimeoStatus(id, value) {
+    const dot = document.getElementById('vs-' + id);
+    const link = document.getElementById('vl-' + id);
+    if (dot) dot.classList.toggle('filled', !!value);
+    if (link) {
+      link.classList.toggle('visible', !!value);
+      if (value) link.href = 'https://vimeo.com/' + value;
+    }
+  }
+
+  // Count filled Vimeo IDs
+  function updateVimeoCount() {
+    const vimeoData = JSON.parse(localStorage.getItem('vimeo-ids') || '{}');
+    const count = Object.keys(vimeoData).length;
+    document.getElementById('vimeo-count').textContent = count;
+  }
+
+  // Restore Vimeo IDs on load
+  function restoreVimeoIds() {
+    const vimeoData = JSON.parse(localStorage.getItem('vimeo-ids') || '{}');
+    Object.entries(vimeoData).forEach(([id, value]) => {
+      const input = document.getElementById('vimeo-' + id);
+      if (input) {
+        input.value = value;
+        updateVimeoStatus(id, value);
+      }
+    });
+    updateVimeoCount();
+  }
+
+  // Export JSON for Supabase import
+  function exportJSON() {
+    const vimeoData = JSON.parse(localStorage.getItem('vimeo-ids') || '{}');
+    const videos = [];
+
+    document.querySelectorAll('.video-card').forEach(card => {
+      const id = card.dataset.id;
+      const vimeoId = vimeoData[id] || null;
+      const title = card.querySelector('.video-title')?.textContent || '';
+      const tag = card.querySelector('.video-tag')?.textContent || '';
+      const section = card.closest('.section')?.id?.replace('section-', '') || '';
+      const duration = card.querySelector('.video-duration')?.textContent || '';
+
+      // Determine programme
+      let programme = 'commun';
+      if (section === 'v') programme = 'v-inversion';
+      else if (section === 'va') programme = 'v-aerien';
+      else if (section === 'sm') programme = 'sm-sol';
+      else if (section === 'sma') programme = 'sm-aerien';
+      else if (section === 'intros') programme = 'intros';
+
+      videos.push({
+        id: id,
+        title: title.trim(),
+        vimeo_id: vimeoId,
+        type: tag.trim().toLowerCase(),
+        programme: programme,
+        duration: duration.trim(),
+        order_index: videos.length + 1
+      });
+    });
+
+    const json = JSON.stringify(videos, null, 2);
+    downloadFile('plan-tournage-videos.json', json, 'application/json');
+  }
+
+  // Export CSV
+  function exportCSV() {
+    const vimeoData = JSON.parse(localStorage.getItem('vimeo-ids') || '{}');
+    let csv = 'id,title,vimeo_id,type,programme,duration,order_index\n';
+
+    document.querySelectorAll('.video-card').forEach((card, index) => {
+      const id = card.dataset.id;
+      const vimeoId = vimeoData[id] || '';
+      const title = (card.querySelector('.video-title')?.textContent || '').trim().replace(/"/g, '""');
+      const tag = (card.querySelector('.video-tag')?.textContent || '').trim();
+      const section = card.closest('.section')?.id?.replace('section-', '') || '';
+      const duration = (card.querySelector('.video-duration')?.textContent || '').trim();
+
+      let programme = 'commun';
+      if (section === 'v') programme = 'v-inversion';
+      else if (section === 'va') programme = 'v-aerien';
+      else if (section === 'sm') programme = 'sm-sol';
+      else if (section === 'sma') programme = 'sm-aerien';
+      else if (section === 'intros') programme = 'intros';
+
+      csv += `${id},"${title}",${vimeoId},${tag},${programme},${duration},${index + 1}\n`;
+    });
+
+    downloadFile('plan-tournage-videos.csv', csv, 'text/csv');
+  }
+
+  // Download helper
+  function downloadFile(filename, content, type) {
+    const blob = new Blob([content], { type: type });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  // Clear all Vimeo IDs
+  function clearAllVimeo() {
+    if (!confirm('Supprimer TOUS les Vimeo IDs ? Cette action est irreversible.')) return;
+    localStorage.removeItem('vimeo-ids');
+    document.querySelectorAll('.vimeo-field input').forEach(input => {
+      input.value = '';
+    });
+    document.querySelectorAll('.vimeo-status').forEach(dot => {
+      dot.classList.remove('filled');
+    });
+    document.querySelectorAll('.vimeo-link').forEach(link => {
+      link.classList.remove('visible');
+    });
+    updateVimeoCount();
+  }
+
+  // Progress tracking with localStorage
+  function updateProgress() {
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    const checked = document.querySelectorAll('input[type="checkbox"]:checked');
+
+    // Save state
+    const state = {};
+    checkboxes.forEach(cb => {
+      const card = cb.closest('.video-card');
+      if (card) {
+        state[card.dataset.id] = cb.checked;
+        card.classList.toggle('checked', cb.checked);
+      }
+    });
+    localStorage.setItem('filming-progress', JSON.stringify(state));
+
+    // Update stats
+    document.getElementById('checked-count').textContent = checked.length;
+    document.getElementById('remaining-count').textContent = checkboxes.length - checked.length;
+    document.getElementById('progress-fill').style.width = (checked.length / checkboxes.length * 100) + '%';
+  }
+
+  // Restore state on load
+  window.addEventListener('DOMContentLoaded', () => {
+    // Inject Vimeo fields first
+    injectVimeoFields();
+
+    // Restore checkboxes
+    const saved = JSON.parse(localStorage.getItem('filming-progress') || '{}');
+    Object.entries(saved).forEach(([id, checked]) => {
+      const card = document.querySelector(`.video-card[data-id="${id}"]`);
+      if (card) {
+        const cb = card.querySelector('input[type="checkbox"]');
+        if (cb) {
+          cb.checked = checked;
+          card.classList.toggle('checked', checked);
+        }
+      }
+    });
+    updateProgress();
+
+    // Restore Vimeo IDs
+    restoreVimeoIds();
+  });
+
+  // Search
+  document.getElementById('search-input').addEventListener('input', function() {
+    const query = this.value.toLowerCase();
+    document.querySelectorAll('.video-card').forEach(card => {
+      const title = card.querySelector('.video-title').textContent.toLowerCase();
+      const desc = card.querySelector('.video-desc')?.textContent.toLowerCase() || '';
+      const vimeoInput = card.querySelector('.vimeo-field input');
+      const vimeoVal = vimeoInput?.value?.toLowerCase() || '';
+      card.style.display = (title.includes(query) || desc.includes(query) || vimeoVal.includes(query)) ? '' : 'none';
+    });
+    // Show all sections when searching
+    if (query) {
+      document.querySelectorAll('.section').forEach(s => s.style.display = 'block');
+    }
+  });
+
+  function resetFilters() {
+    document.getElementById('search-input').value = '';
+    document.querySelectorAll('.video-card').forEach(card => card.style.display = '');
+    document.querySelectorAll('.section').forEach(s => {
+      s.style.display = '';
+      s.classList.remove('active');
+    });
+    document.querySelector('.tab.active')?.click();
+  }
+</script>
+
+</body>
+</html>
