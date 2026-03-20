@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Plan de Tournage — Programmes Conditioning | Vincent Regnault</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#3498db">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -541,59 +540,6 @@
       margin-bottom: 1rem;
     }
     .tuto-counter strong { color: var(--text); }
-
-    /* Login */
-    .login-bar {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.5rem 1rem;
-      background: var(--surface2);
-      border-radius: 6px;
-      margin-bottom: 1rem;
-      flex-wrap: wrap;
-    }
-    .login-bar input {
-      padding: 0.4rem 0.6rem;
-      border-radius: 4px;
-      border: 1px solid var(--border);
-      background: var(--bg);
-      color: var(--text);
-      font-size: 0.8rem;
-      outline: none;
-    }
-    .login-bar input:focus { border-color: var(--primary); }
-    .login-bar button {
-      padding: 0.4rem 0.8rem;
-      border-radius: 4px;
-      border: none;
-      background: var(--primary);
-      color: #fff;
-      cursor: pointer;
-      font-size: 0.8rem;
-    }
-    .login-bar .user-info {
-      font-size: 0.75rem;
-      color: var(--accent);
-      flex: 1;
-    }
-    .login-bar .logout-btn {
-      background: transparent;
-      border: 1px solid var(--danger);
-      color: var(--danger);
-      font-size: 0.7rem;
-      padding: 0.3rem 0.6rem;
-    }
-    .sync-indicator {
-      font-size: 0.65rem;
-      padding: 0.15rem 0.4rem;
-      border-radius: 10px;
-      background: var(--accent);
-      color: #000;
-    }
-    .sync-indicator.offline {
-      background: var(--warning);
-    }
 
     /* Install prompt */
     .install-banner {
@@ -1856,25 +1802,12 @@
   <!-- ==================== IDEES TUTOS ==================== -->
   <section class="section" id="section-tutos">
 
-    <!-- Login -->
-    <div class="login-bar" id="login-section">
-      <span style="font-size:0.8rem;color:var(--text-muted);">Connexion admin :</span>
-      <input type="email" id="login-email" placeholder="Email">
-      <input type="password" id="login-password" placeholder="Mot de passe" onkeydown="if(event.key==='Enter') loginSupabase()">
-      <button onclick="loginSupabase()">Connexion</button>
-    </div>
-    <div class="login-bar" id="user-section" style="display:none;">
-      <span class="user-info" id="user-email"></span>
-      <span class="sync-indicator" id="sync-status">Sync</span>
-      <button class="logout-btn" onclick="logoutSupabase()">Deconnexion</button>
-    </div>
-
     <div class="session-header" style="border-left-color: #e056c1;">
       <h2>Idees de Tutos Pole Dance</h2>
       <span class="count" id="tuto-total-count">0 idees</span>
     </div>
 
-    <div class="tuto-add" id="tuto-add-section" style="display:none;">
+    <div class="tuto-add">
       <input type="text" id="tuto-input" placeholder="Nom de la figure (ex: Jade Split, Ayesha, Deadlift...)" onkeydown="if(event.key==='Enter') addTuto()">
       <button onclick="addTuto()">+ Ajouter</button>
     </div>
@@ -2133,100 +2066,44 @@
     document.querySelector('.tab.active')?.click();
   }
 
-  // ==================== SUPABASE ====================
-
-  const SUPABASE_URL = 'https://ykegiulmpzxdjrcegzqa.supabase.co';
-  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlrZWdpdWxtcHp4ZGpyY2VnenFhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYwNDYwNDksImV4cCI6MjA4MTYyMjA0OX0.1vMThq8lWcCtuEmmFMbAmLUqkGFU0il_tU0iflolJGM';
-  const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-  let isLoggedIn = false;
-  let tutoCache = [];
-
-  // Auth
-  async function loginSupabase() {
-    const email = document.getElementById('login-email').value;
-    const password = document.getElementById('login-password').value;
-    const { error } = await sb.auth.signInWithPassword({ email, password });
-    if (error) {
-      alert('Erreur : ' + error.message);
-      return;
-    }
-    onAuthChange();
-  }
-
-  async function logoutSupabase() {
-    await sb.auth.signOut();
-    isLoggedIn = false;
-    document.getElementById('login-section').style.display = 'flex';
-    document.getElementById('user-section').style.display = 'none';
-    document.getElementById('tuto-add-section').style.display = 'none';
-    loadTutos();
-  }
-
-  async function onAuthChange() {
-    const { data: { user } } = await sb.auth.getUser();
-    if (user) {
-      isLoggedIn = true;
-      document.getElementById('login-section').style.display = 'none';
-      document.getElementById('user-section').style.display = 'flex';
-      document.getElementById('user-email').textContent = user.email;
-      document.getElementById('tuto-add-section').style.display = 'flex';
-    } else {
-      isLoggedIn = false;
-      document.getElementById('login-section').style.display = 'flex';
-      document.getElementById('user-section').style.display = 'none';
-      document.getElementById('tuto-add-section').style.display = 'none';
-    }
-    loadTutos();
-  }
-
-  // ==================== IDEES TUTOS (SUPABASE) ====================
+  // ==================== IDEES TUTOS (localStorage) ====================
 
   const STATUSES = { idea: 'Idee', tofilm: 'A filmer', filmed: 'Filmee' };
   const STATUS_ORDER = ['idea', 'tofilm', 'filmed'];
   let currentFilter = 'all';
-  let saveTimers = {};
 
-  async function loadTutos() {
-    setSyncStatus('loading');
-    const { data, error } = await sb.from('tuto_ideas').select('*').order('created_at', { ascending: false });
-    if (error) {
-      setSyncStatus('offline');
-      // Fallback localStorage
-      tutoCache = JSON.parse(localStorage.getItem('tutos_cache') || '[]');
-    } else {
-      tutoCache = data;
-      localStorage.setItem('tutos_cache', JSON.stringify(data));
-      setSyncStatus('online');
-    }
+  function getTutos() {
+    return JSON.parse(localStorage.getItem('tutos') || '[]');
+  }
+
+  function saveTutos(tutos) {
+    localStorage.setItem('tutos', JSON.stringify(tutos));
     renderTutos();
     updateTutoCounts();
   }
 
-  function setSyncStatus(status) {
-    const el = document.getElementById('sync-status');
-    if (!el) return;
-    if (status === 'online') { el.textContent = 'Sync'; el.className = 'sync-indicator'; }
-    else if (status === 'offline') { el.textContent = 'Offline'; el.className = 'sync-indicator offline'; }
-    else { el.textContent = '...'; el.className = 'sync-indicator offline'; }
-  }
-
-  async function addTuto() {
+  function addTuto() {
     const input = document.getElementById('tuto-input');
     const name = input.value.trim();
-    if (!name || !isLoggedIn) return;
+    if (!name) return;
 
-    const { data, error } = await sb.from('tuto_ideas').insert({ name }).select().single();
-    if (error) {
-      alert('Erreur : ' + error.message);
-      return;
-    }
+    const tutos = getTutos();
+    tutos.unshift({
+      id: Date.now().toString(),
+      name: name,
+      status: 'idea',
+      description: '',
+      vimeo_id: '',
+      created_at: new Date().toISOString()
+    });
+    saveTutos(tutos);
     input.value = '';
-    loadTutos();
   }
 
   function renderTutos() {
+    const tutos = getTutos();
     const list = document.getElementById('tuto-list');
-    const filtered = currentFilter === 'all' ? tutoCache : tutoCache.filter(t => t.status === currentFilter);
+    const filtered = currentFilter === 'all' ? tutos : tutos.filter(t => t.status === currentFilter);
 
     list.innerHTML = filtered.map(t => `
       <div class="tuto-card status-${t.status}" data-tuto-id="${t.id}">
@@ -2237,23 +2114,21 @@
           <span class="video-expand">&#9660;</span>
         </div>
         <div class="tuto-details">
-          ${isLoggedIn ? `<div class="tuto-actions">
+          <div class="tuto-actions">
             <button class="btn-search" onclick="searchFigure('${t.id}')">Rechercher description</button>
             <button class="btn-status" onclick="cycleTutoStatus('${t.id}')">${getNextStatusLabel(t.status)}</button>
             <button class="btn-delete" onclick="deleteTuto('${t.id}')">Supprimer</button>
-          </div>` : '<div style="font-size:0.75rem;color:var(--text-muted);margin-top:0.5rem;">Connectez-vous pour modifier</div>'}
+          </div>
 
           <div class="tuto-search-results" id="search-results-${t.id}"></div>
 
           <textarea class="tuto-desc-area" placeholder="Description / notes pour le tournage..."
-            ${!isLoggedIn ? 'disabled' : ''}
-            oninput="debounceSaveTutoField('${t.id}', 'description', this.value)">${escapeHtml(t.description || '')}</textarea>
+            oninput="saveTutoField('${t.id}', 'description', this.value)">${escapeHtml(t.description || '')}</textarea>
 
           <div class="vimeo-field" style="margin-top:0.5rem;">
             <label><span class="vimeo-status ${t.vimeo_id ? 'filled' : ''}" id="tvs-${t.id}"></span> Vimeo ID</label>
             <input type="text" value="${t.vimeo_id || ''}" placeholder="ex: 987654321"
-              ${!isLoggedIn ? 'disabled' : ''}
-              oninput="debounceSaveTutoField('${t.id}', 'vimeo_id', this.value); document.getElementById('tvs-${t.id}').classList.toggle('filled', !!this.value)">
+              oninput="saveTutoField('${t.id}', 'vimeo_id', this.value); document.getElementById('tvs-${t.id}').classList.toggle('filled', !!this.value)">
             ${t.vimeo_id ? `<a href="https://vimeo.com/${t.vimeo_id}" target="_blank" style="font-size:0.7rem;color:var(--primary);">Voir</a>` : ''}
           </div>
         </div>
@@ -2277,39 +2152,26 @@
     return 'Passer en : ' + STATUSES[next];
   }
 
-  async function cycleTutoStatus(id) {
-    if (!isLoggedIn) return;
-    const t = tutoCache.find(x => x.id === id);
+  function cycleTutoStatus(id) {
+    const tutos = getTutos();
+    const t = tutos.find(x => x.id === id);
     if (!t) return;
     const idx = STATUS_ORDER.indexOf(t.status);
-    const newStatus = STATUS_ORDER[(idx + 1) % STATUS_ORDER.length];
-    await sb.from('tuto_ideas').update({ status: newStatus }).eq('id', id);
-    loadTutos();
+    t.status = STATUS_ORDER[(idx + 1) % STATUS_ORDER.length];
+    saveTutos(tutos);
   }
 
-  async function deleteTuto(id) {
-    if (!isLoggedIn || !confirm('Supprimer cette idee ?')) return;
-    await sb.from('tuto_ideas').delete().eq('id', id);
-    loadTutos();
+  function deleteTuto(id) {
+    if (!confirm('Supprimer cette idee ?')) return;
+    saveTutos(getTutos().filter(t => t.id !== id));
   }
 
-  // Debounce save (attendre 800ms apres la derniere frappe)
-  function debounceSaveTutoField(id, field, value) {
-    const key = id + '-' + field;
-    clearTimeout(saveTimers[key]);
-    saveTimers[key] = setTimeout(() => saveTutoField(id, field, value), 800);
-  }
-
-  async function saveTutoField(id, field, value) {
-    if (!isLoggedIn) return;
-    setSyncStatus('loading');
-    const update = {};
-    update[field] = value;
-    const { error } = await sb.from('tuto_ideas').update(update).eq('id', id);
-    setSyncStatus(error ? 'offline' : 'online');
-    // Update local cache
-    const t = tutoCache.find(x => x.id === id);
-    if (t) t[field] = value;
+  function saveTutoField(id, field, value) {
+    const tutos = getTutos();
+    const t = tutos.find(x => x.id === id);
+    if (!t) return;
+    t[field] = value;
+    localStorage.setItem('tutos', JSON.stringify(tutos));
     updateTutoCounts();
   }
 
@@ -2321,19 +2183,21 @@
   }
 
   function updateTutoCounts() {
-    const ideas = tutoCache.filter(t => t.status === 'idea').length;
-    const tofilm = tutoCache.filter(t => t.status === 'tofilm').length;
-    const filmed = tutoCache.filter(t => t.status === 'filmed').length;
+    const tutos = getTutos();
+    const ideas = tutos.filter(t => t.status === 'idea').length;
+    const tofilm = tutos.filter(t => t.status === 'tofilm').length;
+    const filmed = tutos.filter(t => t.status === 'filmed').length;
 
-    document.getElementById('tuto-tab-count').textContent = tutoCache.length;
-    document.getElementById('tuto-total-count').textContent = tutoCache.length + ' idees';
+    document.getElementById('tuto-tab-count').textContent = tutos.length;
+    document.getElementById('tuto-total-count').textContent = tutos.length + ' idees';
     document.getElementById('tuto-counter').innerHTML =
       `<strong>${ideas}</strong> idees | <strong>${tofilm}</strong> a filmer | <strong>${filmed}</strong> filmees`;
   }
 
   // Web search for figure description
   async function searchFigure(id) {
-    const t = tutoCache.find(x => x.id === id);
+    const tutos = getTutos();
+    const t = tutos.find(x => x.id === id);
     if (!t) return;
 
     const resultsDiv = document.getElementById('search-results-' + id);
@@ -2389,19 +2253,19 @@
     }
   }
 
-  async function applySearchToDesc(id) {
-    if (!isLoggedIn) return;
+  function applySearchToDesc(id) {
     const resultsDiv = document.getElementById('search-results-' + id);
     const results = JSON.parse(resultsDiv.dataset.results || '[]');
     if (!results.length) return;
 
-    const t = tutoCache.find(x => x.id === id);
+    const tutos = getTutos();
+    const t = tutos.find(x => x.id === id);
     if (!t) return;
 
     const info = results.join('\n\n');
     const newDesc = (t.description ? t.description + '\n\n---\nRecherche:\n' : '') + info;
-    await saveTutoField(id, 'description', newDesc);
-    loadTutos();
+    saveTutoField(id, 'description', newDesc);
+    renderTutos();
   }
 
   // ==================== PWA ====================
@@ -2428,12 +2292,11 @@
     });
   }
 
-  // Init tutos + auth on load
-  sb.auth.onAuthStateChange((event, session) => {
-    onAuthChange();
+  // Init tutos on load
+  document.addEventListener('DOMContentLoaded', () => {
+    renderTutos();
+    updateTutoCounts();
   });
-  // Initial check
-  onAuthChange();
 </script>
 
 </body>
