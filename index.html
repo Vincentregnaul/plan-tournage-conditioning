@@ -1828,6 +1828,14 @@
 </div>
 
 <script>
+  // Renumber videos per section (restart at 1 for each section)
+  document.querySelectorAll('.section').forEach(section => {
+    const nums = section.querySelectorAll('.video-num');
+    nums.forEach((num, i) => {
+      num.textContent = i + 1;
+    });
+  });
+
   // Tab switching
   document.querySelectorAll('.tab').forEach(tab => {
     tab.addEventListener('click', () => {
